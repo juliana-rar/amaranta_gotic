@@ -1,0 +1,80 @@
+@page "/register"
+@attribute [AllowAnonymous]
+@layout PosReserva.Web.Components.Layout.AuthLayout
+@using System.ComponentModel.DataAnnotations
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+@inject AuthService Auth
+@inject NavigationManager Nav
+
+<PageTitle>Crear cuenta · Pizzería del Puerto</PageTitle>
+
+<div class="auth-card__brand">🍕 Pizzería del Puerto</div>
+<h1>Crear cuenta de administración</h1>
+<p>Necesitas el código de invitación para poder editar el contenido del sitio.</p>
+
+<EditForm Model="Input" method="post" OnValidSubmit="RegisterUser" FormName="register" Enhance="false" class="admin-form">
+    <DataAnnotationsValidator />
+
+    @if (_error is not null)
+    {
+        <div class="field-error">@_error</div>
+    }
+
+    <div class="field">
+        <label>Código de invitación</label>
+        <InputText @bind-Value="Input.InviteCode" class="input" />
+        <ValidationMessage For="() => Input.InviteCode" />
+    </div>
+
+    <div class="field">
+        <label>Usuario</label>
+        <InputText @bind-Value="Input.Username" class="input" autocomplete="username" />
+        <ValidationMessage For="() => Input.Username" />
+    </div>
+
+    <div class="field">
+        <label>Contraseña</label>
+        <InputText type="password" @bind-Value="Input.Password" class="input" autocomplete="new-password" />
+        <ValidationMessage For="() => Input.Password" />
+    </div>
+
+    <button class="button" type="submit">Crear cuenta</button>
+</EditForm>
+
+<p class="auth-card__hint">¿Ya tienes cuenta? <a href="/login">Iniciar sesión</a></p>
+
+@code {
+    [CascadingParameter] public HttpContext HttpContext { get; set; } = default!;
+    [SupplyParameterFromForm] public RegisterInput Input { get; set; } = new();
+
+    private string? _error;
+
+    private async Task RegisterUser()
+    {
+        var result = await Auth.RegisterAsync(Input.Username.Trim(), Input.Password, Input.InviteCode.Trim());
+        if (!result.Success)
+        {
+            _error = result.ErrorMessage;
+            return;
+        }
+
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, result.User!.Id.ToString()),
+            new(ClaimTypes.Name, result.User.Username)
+        };
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
+
+        Nav.NavigateTo("/admin");
+    }
+
+    public class RegisterInput
+    {
+        [Required] public string InviteCode { get; set; } = "";
+        [Required] public string Username { get; set; } = "";
+        [Required, MinLength(4, ErrorMessage = "Mínimo 4 caracteres")] public string Password { get; set; } = "";
+    }
+}

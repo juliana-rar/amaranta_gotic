@@ -1,0 +1,34 @@
+@inject NavigationManager Nav
+
+<header class="site-header" data-hero="@(IsHeroPage ? "true" : "false")">
+    <div class="container site-header__inner">
+        <a class="site-header__brand" href="/">
+            <span class="site-header__brand-mark">🍕</span>
+            Pizzería del Puerto
+        </a>
+        <input type="checkbox" id="nav-toggle" class="site-header__toggle" />
+        <label for="nav-toggle" class="site-header__burger">☰</label>
+        <nav class="site-nav">
+            <NavLink href="/" Match="NavLinkMatch.All">Inicio</NavLink>
+            <NavLink href="/menu">Menú</NavLink>
+            <NavLink href="/ubicacion">Ubicación</NavLink>
+            <NavLink href="/contacto">Contacto</NavLink>
+            <NavLink href="/reservar" class="site-nav__cta">Reservar mesa</NavLink>
+            <AuthorizeView>
+                <Authorized>
+                    <NavLink href="/admin">Panel</NavLink>
+                    <form method="post" action="/account/logout">
+                        <button type="submit" class="site-nav__logout">Salir</button>
+                    </form>
+                </Authorized>
+            </AuthorizeView>
+        </nav>
+    </div>
+</header>
+
+@code {
+    // Pages that open with a dark hero/banner section the header can float over transparently.
+    private static readonly string[] HeroPaths = ["/", "/menu", "/ubicacion", "/contacto"];
+
+    private bool IsHeroPage => HeroPaths.Contains(new Uri(Nav.Uri).AbsolutePath);
+}

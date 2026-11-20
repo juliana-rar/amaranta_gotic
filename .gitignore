@@ -1,0 +1,22 @@
+## .NET
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+*.user
+.vs/
+
+## Secrets / local config
+.env
+
+## Local Sqlite dev database
+*.db
+*.db-shm
+*.db-wal
+
+## User-uploaded dish images (runtime data, not source)
+src/PosReserva.Web/wwwroot/uploads/
+
+## Rider / VS Code
+.idea/
+.vscode/

@@ -1,0 +1,51 @@
+@page "/ubicacion"
+@using PosReserva.Web.Data
+@inject SiteContentService ContentService
+@inject BusinessHoursService HoursService
+
+<PageTitle>Ubicación y horario · Pizzería del Puerto</PageTitle>
+
+<section class="page-hero">
+    <div class="container">
+        <h1>Dónde estamos</h1>
+    </div>
+</section>
+
+<section class="container page-section">
+    <div class="info-grid">
+        <div>
+            <h2>Dirección</h2>
+            @foreach (var line in content.LocationAddress.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+            {
+                <p>@line</p>
+            }
+            <p><a href="tel:@content.ContactPhone.Replace(" ", "")">@content.ContactPhone</a></p>
+        </div>
+
+        <div>
+            <h2>Horario</h2>
+            <table class="hours-table">
+                <tbody>
+                    @foreach (var hour in hours)
+                    {
+                        <tr>
+                            <td>@BusinessHoursService.DayNames[hour.DayOrder]</td>
+                            <td>@BusinessHoursService.FormatShifts(hour)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+@code {
+    private SiteContent content = new();
+    private List<BusinessHour> hours = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        content = await ContentService.GetAsync();
+        hours = await HoursService.GetAllAsync();
+    }
+}

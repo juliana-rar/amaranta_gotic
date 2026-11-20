@@ -1,0 +1,76 @@
+@implements IDisposable
+@using PosReserva.Web.Data
+
+<div class="carousel">
+    <div class="carousel__track">
+        @for (var i = 0; i < Images.Count; i++)
+        {
+            var image = Images[i];
+            <div class="carousel__slide" data-active="@(i == index ? "true" : "false")">
+                <img src="@image.ImageUrl" alt="@image.Caption" />
+                @if (!string.IsNullOrWhiteSpace(image.Caption))
+                {
+                    <div class="carousel__caption">@image.Caption</div>
+                }
+            </div>
+        }
+    </div>
+
+    @if (Images.Count > 1)
+    {
+        <button type="button" class="carousel__nav" data-dir="prev" @onclick="Prev" aria-label="Foto anterior">‹</button>
+        <button type="button" class="carousel__nav" data-dir="next" @onclick="Next" aria-label="Foto siguiente">›</button>
+
+        <div class="carousel__dots">
+            @for (var i = 0; i < Images.Count; i++)
+            {
+                var target = i;
+                <button type="button" class="carousel__dot" data-active="@(target == index ? "true" : "false")"
+                        @onclick="() => GoTo(target)" aria-label="Ir a la foto @(target + 1)"></button>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public List<GalleryImage> Images { get; set; } = new();
+
+    private int index;
+    private System.Threading.Timer? timer;
+
+    protected override void OnInitialized()
+    {
+        if (Images.Count > 1)
+        {
+            timer = new System.Threading.Timer(_ => Advance(), null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
+        }
+    }
+
+    private void Advance()
+    {
+        index = (index + 1) % Images.Count;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void Next()
+    {
+        index = (index + 1) % Images.Count;
+        ResetTimer();
+    }
+
+    private void Prev()
+    {
+        index = (index - 1 + Images.Count) % Images.Count;
+        ResetTimer();
+    }
+
+    private void GoTo(int target)
+    {
+        index = target;
+        ResetTimer();
+    }
+
+    private void ResetTimer() => timer?.Change(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
+
+    public void Dispose() => timer?.Dispose();
+}

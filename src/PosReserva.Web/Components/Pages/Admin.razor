@@ -1,0 +1,136 @@
+@page "/admin"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@layout PosReserva.Web.Components.Layout.AdminLayout
+@using PosReserva.Web.Data
+@inject DishService Dishes
+
+<PageTitle>Panel · Platos destacados</PageTitle>
+
+<div class="admin-page-head">
+    <h1>Platos destacados</h1>
+    <p>Se muestran en la portada de la web, en el orden indicado.</p>
+</div>
+
+<div class="admin-card">
+    <h2 class="admin-form__section">@(editing.Id > 0 ? "Editar plato" : "Añadir plato")</h2>
+    <div class="admin-form">
+        <div class="field">
+            <label>Título</label>
+            <input class="input" @bind="editing.Title" @bind:event="oninput" />
+        </div>
+        <div class="field">
+            <label>Descripción</label>
+            <textarea class="input" rows="2" @bind="editing.Description"></textarea>
+        </div>
+        <div class="field">
+            <label>Imagen</label>
+            <ImageUpload @bind-Value="editing.ImageUrl" Folder="dishes" />
+        </div>
+        <div class="field">
+            <label>Orden</label>
+            <input type="number" class="input" @bind="editing.DisplayOrder" />
+        </div>
+        @if (error is not null)
+        {
+            <div class="field-error">@error</div>
+        }
+        <div class="admin-form__actions">
+            <button class="button" @onclick="SaveAsync">@(editing.Id > 0 ? "Guardar cambios" : "Añadir plato")</button>
+            @if (editing.Id > 0)
+            {
+                <button class="button" data-variant="outline" @onclick="ResetForm">Cancelar</button>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="admin-table-wrap">
+    @if (dishes.Count == 0)
+    {
+        <p class="admin-empty">Todavía no hay platos destacados. Añade el primero arriba.</p>
+    }
+    else
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Título</th>
+                    <th>Descripción</th>
+                    <th>Orden</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var dish in dishes)
+                {
+                    <tr>
+                        <td>
+                            @if (!string.IsNullOrWhiteSpace(dish.ImageUrl))
+                            {
+                                <img class="admin-table__thumb" src="@dish.ImageUrl" alt="" />
+                            }
+                        </td>
+                        <td class="admin-table__title">@dish.Title</td>
+                        <td class="admin-table__desc">@dish.Description</td>
+                        <td>@dish.DisplayOrder</td>
+                        <td>
+                            <div class="admin-table__actions">
+                                <button class="button" data-variant="outline" @onclick="() => Edit(dish)">Editar</button>
+                                <button class="button" data-variant="outline" @onclick="() => DeleteAsync(dish.Id)">Eliminar</button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@code {
+    private List<Dish> dishes = new();
+    private Dish editing = new();
+    private string? error;
+
+    protected override async Task OnInitializedAsync() => dishes = await Dishes.GetAllAsync();
+
+    private void Edit(Dish dish) => editing = new Dish
+    {
+        Id = dish.Id,
+        Title = dish.Title,
+        Description = dish.Description,
+        ImageUrl = dish.ImageUrl,
+        DisplayOrder = dish.DisplayOrder
+    };
+
+    private void ResetForm()
+    {
+        editing = new Dish();
+        error = null;
+    }
+
+    private async Task SaveAsync()
+    {
+        error = null;
+        if (string.IsNullOrWhiteSpace(editing.Title))
+        {
+            error = "Indica un título para el plato.";
+            return;
+        }
+
+        if (editing.Id > 0)
+            await Dishes.UpdateAsync(editing);
+        else
+            await Dishes.CreateAsync(editing);
+
+        dishes = await Dishes.GetAllAsync();
+        ResetForm();
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        await Dishes.DeleteAsync(id);
+        dishes = await Dishes.GetAllAsync();
+    }
+}

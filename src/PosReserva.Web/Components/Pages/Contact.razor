@@ -1,0 +1,35 @@
+@page "/contacto"
+@using PosReserva.Web.Data
+@inject SiteContentService ContentService
+
+<PageTitle>Contacto · Pizzería del Puerto</PageTitle>
+
+<section class="page-hero">
+    <div class="container">
+        <h1>Contacto</h1>
+        <p>¿Tienes alguna pregunta o quieres organizar un evento privado? Escríbenos.</p>
+    </div>
+</section>
+
+<section class="container page-section">
+    <div class="contact-cards">
+        <div class="contact-card">
+            <h3>Teléfono</h3>
+            <p><a href="tel:@content.ContactPhone.Replace(" ", "")">@content.ContactPhone</a></p>
+        </div>
+        <div class="contact-card">
+            <h3>Email</h3>
+            <p><a href="mailto:@content.ContactEmail">@content.ContactEmail</a></p>
+        </div>
+        <div class="contact-card">
+            <h3>Instagram</h3>
+            <p><a href="https://instagram.com" target="_blank" rel="noopener">@content.ContactInstagram</a></p>
+        </div>
+    </div>
+</section>
+
+@code {
+    private SiteContent content = new();
+
+    protected override async Task OnInitializedAsync() => content = await ContentService.GetAsync();
+}

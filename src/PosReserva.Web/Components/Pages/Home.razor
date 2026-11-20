@@ -1,0 +1,242 @@
+@page "/"
+@using PosReserva.Web.Data
+@inject SiteContentService ContentService
+@inject DishService DishService
+@inject TestimonialService TestimonialService
+@inject GalleryService GalleryService
+
+<PageTitle>Pizzería del Puerto</PageTitle>
+
+<section class="hero">
+    <div class="hero__bg" style="@HeroStyle"></div>
+    <div class="hero__overlay"></div>
+    <div class="container hero__inner">
+        <span class="eyebrow hero__eyebrow">@content.HeroEyebrow</span>
+        <h1>@content.HeroTitle</h1>
+        <p>@content.HeroSubtitle</p>
+        <div class="hero__actions">
+            <a class="button" data-size="lg" href="/reservar">Reservar mesa</a>
+            <a class="button" data-variant="outline" data-size="lg" href="/menu">Ver el menú</a>
+        </div>
+        <div class="hero__trust">
+            <span class="hero__trust-item">⭐⭐⭐⭐⭐ <strong>4.8</strong> en Google</span>
+            <span class="hero__trust-item">✅ Confirmación <strong>al instante</strong></span>
+            <span class="hero__trust-item">📍 <strong>Paseo del Puerto</strong></span>
+        </div>
+    </div>
+</section>
+
+<section class="menu-band">
+    <div class="container">
+        <h2 class="menu-band__title reveal">Nuestra carta</h2>
+        <div class="menu-band__grid stagger">
+            @foreach (var category in MenuCategories)
+            {
+                <div class="menu-band__item reveal">
+                    @if (!string.IsNullOrWhiteSpace(category.Image))
+                    {
+                        <div class="menu-band__circle"><img src="@category.Image" alt="@category.Title" /></div>
+                    }
+                    else
+                    {
+                        <div class="menu-band__circle" data-empty="true">@category.Fallback</div>
+                    }
+                    <h3>@category.Title</h3>
+                    <p>@category.Description</p>
+                </div>
+            }
+        </div>
+        <div class="menu-band__cta reveal">
+            <a class="button" data-size="lg" href="/menu">Ver la carta completa</a>
+        </div>
+    </div>
+</section>
+
+<section class="features container stagger">
+    <div class="feature-card reveal">
+        <div class="feature-card__icon">@content.Feature1Icon</div>
+        <h3>@content.Feature1Title</h3>
+        <p>@content.Feature1Description</p>
+    </div>
+    <div class="feature-card reveal">
+        <div class="feature-card__icon">@content.Feature2Icon</div>
+        <h3>@content.Feature2Title</h3>
+        <p>@content.Feature2Description</p>
+    </div>
+    <div class="feature-card reveal">
+        <div class="feature-card__icon">@content.Feature3Icon</div>
+        <h3>@content.Feature3Title</h3>
+        <p>@content.Feature3Description</p>
+    </div>
+</section>
+
+<section class="origin container stagger">
+    <div class="origin__block reveal">
+        <h2>Nuestro origen</h2>
+        <p>@content.StoryParagraph1</p>
+    </div>
+    <div class="origin__block reveal">
+        <h2>Certificado de calidad</h2>
+        <p>@content.StoryParagraph2</p>
+    </div>
+    <div class="origin__block reveal">
+        <h2>Nuestro lema</h2>
+        <p>"@content.StoryQuote" — @content.StoryQuoteAuthor</p>
+    </div>
+</section>
+
+<section class="ribbon">
+    <a class="reveal" href="/reservar">¡Reserva tu mesa en Pizzería del Puerto! Llama al @content.ContactPhone</a>
+</section>
+
+<section class="break">
+    <div class="hero__bg" style="@BreakStyle"></div>
+    <div class="hero__overlay"></div>
+    <div class="container break__inner reveal">
+        <h2>Prueba nuestras pizzas y personalízalas en 3 pasos</h2>
+        <a class="button" data-size="lg" href="/reservar">Cómo funciona</a>
+    </div>
+</section>
+
+@if (dishes.Count > 0)
+{
+    <section class="dish-showcase container">
+        <div class="section-head reveal" data-align="center">
+            <span class="eyebrow">Novedades</span>
+            <h2>¡Ven a probar nuestras novedades!</h2>
+        </div>
+        <div class="dish-grid stagger">
+            @foreach (var dish in dishes)
+            {
+                <div class="dish-card reveal">
+                    @if (!string.IsNullOrWhiteSpace(dish.ImageUrl))
+                    {
+                        <div class="dish-card__image-wrap"><img src="@dish.ImageUrl" alt="@dish.Title" /></div>
+                    }
+                    else
+                    {
+                        <div class="dish-card__image-wrap" data-empty="true">🍕</div>
+                    }
+                    <div class="dish-card__body">
+                        <h3>@dish.Title</h3>
+                        <p>@dish.Description</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+}
+
+@if (galleryImages.Count > 0)
+{
+    <section class="gallery container">
+        <div class="section-head reveal" data-align="center">
+            <span class="eyebrow">Galería</span>
+            <h2>Así es nuestro local</h2>
+        </div>
+        <div class="reveal">
+            <PhotoCarousel Images="galleryImages" @rendermode="InteractiveServer" />
+        </div>
+    </section>
+}
+
+@if (testimonials.Count > 0)
+{
+    <section class="testimonials container">
+        <div class="section-head reveal" data-align="center">
+            <span class="eyebrow">Opiniones</span>
+            <h2>Lo que dicen nuestros clientes</h2>
+        </div>
+        <div class="testimonial-grid stagger">
+            @foreach (var testimonial in testimonials)
+            {
+                <div class="testimonial-card reveal">
+                    <div class="testimonial-card__stars">★★★★★</div>
+                    <p class="testimonial-card__quote">"@testimonial.Quote"</p>
+                    <p class="testimonial-card__author">
+                        <span class="testimonial-card__avatar">@testimonial.AuthorName.Substring(0, 1)</span>
+                        @testimonial.AuthorName
+                    </p>
+                </div>
+            }
+        </div>
+    </section>
+}
+
+<section class="stats">
+    <div class="container stats__inner stagger">
+        <div class="stats__item reveal">
+            <span class="stats__number">@content.Stat1Number</span>
+            <span class="stats__label">@content.Stat1Label</span>
+        </div>
+        <div class="stats__item reveal">
+            <span class="stats__number">@content.Stat2Number</span>
+            <span class="stats__label">@content.Stat2Label</span>
+        </div>
+        <div class="stats__item reveal">
+            <span class="stats__number">@content.Stat3Number</span>
+            <span class="stats__label">@content.Stat3Label</span>
+        </div>
+        <div class="stats__item reveal">
+            <span class="stats__number">@content.Stat4Number</span>
+            <span class="stats__label">@content.Stat4Label</span>
+        </div>
+    </div>
+</section>
+
+<section class="cta-banner">
+    <div class="container cta-banner__inner reveal">
+        <div>
+            <h2>¿Vienes en grupo o para una ocasión especial?</h2>
+            <p>Resérvanos con antelación y te preparamos la mesa a tu gusto.</p>
+        </div>
+        <a class="button" data-size="lg" href="/reservar">Reservar ahora</a>
+    </div>
+</section>
+
+@code {
+    private SiteContent content = new();
+    private List<Dish> dishes = new();
+    private List<Testimonial> testimonials = new();
+    private List<GalleryImage> galleryImages = new();
+
+    private sealed record MenuCategory(string Image, string Title, string Description, string Fallback);
+
+    private List<MenuCategory> MenuCategories => new()
+    {
+        new(content.Category1Image, content.Category1Title, content.Category1Description, "🥗"),
+        new(content.Category2Image, content.Category2Title, content.Category2Description, "🍕"),
+        new(content.Category3Image, content.Category3Title, content.Category3Description, "🍰"),
+        new(content.Category4Image, content.Category4Title, content.Category4Description, "🥤"),
+    };
+
+    private string HeroStyle
+    {
+        get
+        {
+            var image = galleryImages.ElementAtOrDefault(0)?.ImageUrl
+                ?? dishes.FirstOrDefault(d => !string.IsNullOrWhiteSpace(d.ImageUrl))?.ImageUrl;
+            return string.IsNullOrWhiteSpace(image) ? "" : $"background-image: url('{image}');";
+        }
+    }
+
+    private string BreakStyle
+    {
+        get
+        {
+            var image = galleryImages.ElementAtOrDefault(1)?.ImageUrl
+                ?? galleryImages.ElementAtOrDefault(0)?.ImageUrl
+                ?? dishes.Skip(1).FirstOrDefault(d => !string.IsNullOrWhiteSpace(d.ImageUrl))?.ImageUrl
+                ?? dishes.FirstOrDefault(d => !string.IsNullOrWhiteSpace(d.ImageUrl))?.ImageUrl;
+            return string.IsNullOrWhiteSpace(image) ? "" : $"background-image: url('{image}');";
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        content = await ContentService.GetAsync();
+        dishes = await DishService.GetAllAsync();
+        testimonials = await TestimonialService.GetAllAsync();
+        galleryImages = await GalleryService.GetAllAsync();
+    }
+}

@@ -1,0 +1,124 @@
+@page "/admin/galeria"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@layout PosReserva.Web.Components.Layout.AdminLayout
+@using PosReserva.Web.Data
+@inject GalleryService Gallery
+
+<PageTitle>Panel · Galería</PageTitle>
+
+<div class="admin-page-head">
+    <h1>Galería de fotos</h1>
+    <p>Alimenta el carrusel de fotos del Home, en el orden indicado.</p>
+</div>
+
+<div class="admin-card">
+    <h2 class="admin-form__section">@(editing.Id > 0 ? "Editar foto" : "Añadir foto")</h2>
+    <div class="admin-form">
+        <div class="field">
+            <label>Imagen</label>
+            <ImageUpload @bind-Value="editing.ImageUrl" Folder="gallery" />
+        </div>
+        <div class="field">
+            <label>Pie de foto (opcional)</label>
+            <input class="input" @bind="editing.Caption" @bind:event="oninput" />
+        </div>
+        <div class="field">
+            <label>Orden</label>
+            <input type="number" class="input" @bind="editing.DisplayOrder" />
+        </div>
+        @if (error is not null)
+        {
+            <div class="field-error">@error</div>
+        }
+        <div class="admin-form__actions">
+            <button class="button" @onclick="SaveAsync">@(editing.Id > 0 ? "Guardar cambios" : "Añadir foto")</button>
+            @if (editing.Id > 0)
+            {
+                <button class="button" data-variant="outline" @onclick="ResetForm">Cancelar</button>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="admin-table-wrap">
+    @if (images.Count == 0)
+    {
+        <p class="admin-empty">Todavía no hay fotos. Añade la primera arriba para activar el carrusel del Home.</p>
+    }
+    else
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Pie de foto</th>
+                    <th>Orden</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var image in images)
+                {
+                    <tr>
+                        <td><img class="admin-table__thumb" src="@image.ImageUrl" alt="" /></td>
+                        <td class="admin-table__desc">@image.Caption</td>
+                        <td>@image.DisplayOrder</td>
+                        <td>
+                            <div class="admin-table__actions">
+                                <button class="button" data-variant="outline" @onclick="() => Edit(image)">Editar</button>
+                                <button class="button" data-variant="outline" @onclick="() => DeleteAsync(image.Id)">Eliminar</button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@code {
+    private List<GalleryImage> images = new();
+    private GalleryImage editing = new();
+    private string? error;
+
+    protected override async Task OnInitializedAsync() => images = await Gallery.GetAllAsync();
+
+    private void Edit(GalleryImage image) => editing = new GalleryImage
+    {
+        Id = image.Id,
+        ImageUrl = image.ImageUrl,
+        Caption = image.Caption,
+        DisplayOrder = image.DisplayOrder
+    };
+
+    private void ResetForm()
+    {
+        editing = new GalleryImage();
+        error = null;
+    }
+
+    private async Task SaveAsync()
+    {
+        error = null;
+        if (string.IsNullOrWhiteSpace(editing.ImageUrl))
+        {
+            error = "Sube una imagen.";
+            return;
+        }
+
+        if (editing.Id > 0)
+            await Gallery.UpdateAsync(editing);
+        else
+            await Gallery.CreateAsync(editing);
+
+        images = await Gallery.GetAllAsync();
+        ResetForm();
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        await Gallery.DeleteAsync(id);
+        images = await Gallery.GetAllAsync();
+    }
+}

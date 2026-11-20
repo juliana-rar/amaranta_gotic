@@ -1,0 +1,676 @@
+/* Home page — hero, trust stats, features, gallery carousel, origin, dish showcase,
+   testimonials, CTA. Every color/spacing/radius here comes from base.css's tokens. */
+
+/* Photo carousel */
+
+.gallery {
+    padding-block: var(--section-space);
+}
+
+.carousel {
+    position: relative;
+    max-width: 56rem;
+    margin-inline: auto;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    aspect-ratio: 16/9;
+    background: var(--color-border);
+}
+
+.carousel__track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.carousel__slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 700ms var(--ease);
+}
+
+.carousel__slide[data-active="true"] {
+    opacity: 1;
+}
+
+.carousel__slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.carousel__caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: var(--space-4) var(--space-5);
+    background: linear-gradient(transparent, rgba(20, 12, 6, .72));
+    color: var(--color-on-dark);
+    font-size: var(--text-sm);
+    font-weight: 600;
+}
+
+.carousel__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(245, 238, 225, .5);
+    background: color-mix(in srgb, var(--color-text) 30%, transparent);
+    backdrop-filter: blur(6px);
+    color: var(--color-on-dark);
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color var(--transition-fast) var(--ease), background var(--transition-fast) var(--ease);
+}
+
+.carousel__nav:hover {
+    border-color: var(--color-on-dark);
+    background: color-mix(in srgb, var(--color-text) 50%, transparent);
+}
+
+.carousel__nav[data-dir="prev"] {
+    left: var(--space-3);
+}
+
+.carousel__nav[data-dir="next"] {
+    right: var(--space-3);
+}
+
+.carousel__dots {
+    position: absolute;
+    bottom: var(--space-3);
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.carousel__dot {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: var(--radius-full);
+    border: none;
+    background: rgba(245, 238, 225, .5);
+    cursor: pointer;
+    padding: 0;
+    transition: width var(--transition-fast) var(--ease), background var(--transition-fast) var(--ease);
+}
+
+.carousel__dot[data-active="true"] {
+    background: var(--color-on-dark);
+    width: 1.2rem;
+}
+
+/* Menu categories band — dark, ringed photo medallions + CTA, right after the hero */
+
+.menu-band {
+    background: var(--color-text);
+    color: var(--color-on-dark);
+    padding-block: var(--space-8) var(--space-7);
+    text-align: center;
+}
+
+.menu-band__title {
+    color: var(--color-on-dark);
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-6);
+}
+
+.menu-band__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6) var(--space-4);
+}
+
+@media (min-width: 42rem) {
+    .menu-band__grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.menu-band__circle {
+    width: 8.5rem;
+    height: 8.5rem;
+    margin: 0 auto var(--space-4);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    background: color-mix(in srgb, var(--color-primary) 30%, var(--color-text));
+    border: 1px solid rgba(245, 238, 225, .35);
+    box-shadow: 0 0 0 8px rgba(245, 238, 225, .05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.4rem;
+    transition: transform var(--transition-slow) var(--ease), box-shadow var(--transition-slow) var(--ease);
+}
+
+@media (min-width: 26rem) {
+    .menu-band__circle {
+        width: 9.5rem;
+        height: 9.5rem;
+    }
+}
+
+@media (min-width: 42rem) {
+    .menu-band__circle {
+        width: 10.5rem;
+        height: 10.5rem;
+        font-size: 2.8rem;
+    }
+}
+
+.menu-band__item:hover .menu-band__circle {
+    transform: translateY(-4px);
+    box-shadow: 0 0 0 8px rgba(245, 238, 225, .1), var(--shadow);
+    border-color: var(--color-primary);
+}
+
+.menu-band__circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.menu-band__circle[data-empty="true"] {
+    background: color-mix(in srgb, var(--color-primary) 30%, var(--color-text));
+}
+
+.menu-band__item h3 {
+    color: var(--color-on-dark);
+    font-size: var(--text-base);
+    margin-bottom: 0.3rem;
+}
+
+.menu-band__item p {
+    color: var(--color-on-dark-muted);
+    font-size: var(--text-sm);
+    margin: 0;
+}
+
+.menu-band__cta {
+    margin-top: var(--space-7);
+}
+
+/* Origin / quality / motto — stacked text blocks on a light background */
+
+.origin {
+    max-width: 46rem;
+    padding-block: var(--section-space);
+    display: grid;
+    gap: var(--space-6);
+}
+
+.origin__block h2 {
+    font-size: var(--text-lg);
+    font-family: var(--font-body);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    margin-bottom: var(--space-2);
+}
+
+.origin__block p {
+    color: var(--color-text-muted);
+    margin: 0;
+}
+
+/* Ribbon — full-bleed announcement strip between hairlines; restrained so the
+   solid accent color stays reserved for the closing CTA banner below. */
+
+.ribbon {
+    background: var(--color-text);
+    border-block: 1px solid color-mix(in srgb, var(--color-primary) 55%, transparent);
+    padding-block: var(--space-4);
+    text-align: center;
+}
+
+.ribbon a {
+    color: var(--color-on-dark);
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    letter-spacing: 0.01em;
+    transition: color var(--transition-fast) ease;
+}
+
+.ribbon a:hover {
+    color: color-mix(in srgb, var(--color-primary) 70%, white);
+}
+
+/* Break — full-bleed photo section with overlaid CTA, mid-page. Shares .hero__bg/.hero__overlay
+   with the hero below (same layered background + Ken Burns zoom + dark-overlay pattern). */
+
+.break {
+    position: relative;
+    min-height: 22rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: var(--color-on-dark);
+    text-align: center;
+}
+
+.break__inner {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-5);
+    padding-inline: var(--space-4);
+}
+
+.break h2 {
+    color: var(--color-on-dark);
+    max-width: 32rem;
+    font-size: var(--text-3xl);
+}
+
+.hero {
+    position: relative;
+    /* The header is fixed (not sticky) on this page so it can float transparently over the
+       photo, which takes it out of document flow — compensate here so hero content clears it. */
+    padding-block: calc(var(--space-8) + var(--site-header-h)) var(--space-8);
+    text-align: center;
+    overflow: hidden;
+    color: var(--color-on-dark);
+}
+
+/* Background layer, separate from the overlay/content so it alone can carry the slow
+   continuous Ken Burns zoom (transform animations are what a real image slider like
+   MasterSlider/WOW.js drives — same visual effect, no jQuery plugin needed). */
+.hero__bg {
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-text);
+    background-image: linear-gradient(160deg, #3a2416, var(--color-text));
+    background-size: cover;
+    background-position: center;
+    animation: bg-kenburns 24s ease-in-out infinite alternate;
+}
+
+.hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(20, 12, 6, .5), rgba(20, 12, 6, .82));
+}
+
+@keyframes bg-kenburns {
+    from { transform: scale(1); }
+    to { transform: scale(1.08); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero__bg {
+        animation: none;
+    }
+}
+
+.hero__inner {
+    position: relative;
+    z-index: 2;
+}
+
+.hero__eyebrow {
+    margin-bottom: var(--space-4);
+    color: color-mix(in srgb, var(--color-primary) 65%, white);
+}
+
+.hero__eyebrow::before {
+    background: currentColor;
+}
+
+.hero h1 {
+    font-size: var(--text-5xl);
+    font-weight: 500;
+    max-width: 46rem;
+    margin-inline: auto;
+    color: var(--color-on-dark);
+}
+
+.hero p {
+    max-width: 36rem;
+    margin-inline: auto;
+    color: var(--color-on-dark-muted);
+    font-size: var(--text-lg);
+}
+
+.hero__actions {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: var(--space-5);
+}
+
+.hero__actions .button {
+    border-color: color-mix(in srgb, var(--color-primary) 80%, white);
+}
+
+.hero__actions .button[data-variant="outline"] {
+    border-color: rgba(245, 238, 225, .4);
+    color: var(--color-on-dark);
+}
+
+.hero__actions .button[data-variant="outline"]:hover {
+    border-color: var(--color-on-dark);
+    color: var(--color-on-dark);
+    background: rgba(245, 238, 225, .08);
+}
+
+.hero__trust {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    margin-top: var(--space-6);
+    color: var(--color-on-dark-muted);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+}
+
+.hero__trust-item strong {
+    color: var(--color-on-dark);
+}
+
+/* Trust stats bar — full-bleed dark band, right below the hero */
+
+.stats {
+    background: var(--color-text);
+    color: var(--color-on-dark);
+    padding-block: var(--space-6);
+    border-top: 1px solid rgba(245, 238, 225, .1);
+}
+
+.stats__inner {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-5);
+}
+
+@media (min-width: 48rem) {
+    .stats__inner {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.stats__item {
+    text-align: center;
+}
+
+.stats__number {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    font-weight: 600;
+    color: var(--color-on-dark);
+}
+
+.stats__label {
+    font-size: var(--text-xs);
+    color: var(--color-on-dark-muted);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+}
+
+/* Feature grid — identical ringed treatment for all three cards; the accent is
+   spent on the icon glyph only, not on rotating background hues per card. */
+
+.features {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: 1fr;
+    padding-block: var(--section-space);
+}
+
+@media (min-width: 48rem) {
+    .features {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.feature-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6) var(--space-4);
+    text-align: center;
+    transition: transform var(--transition) var(--ease), box-shadow var(--transition) var(--ease);
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+}
+
+.feature-card__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    margin: 0 auto var(--space-4);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border);
+    color: var(--color-primary);
+    font-size: 1.3rem;
+}
+
+/* Shared section header (dish showcase / gallery / testimonials) */
+
+.section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+}
+
+.section-head[data-align="center"] {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Dish showcase */
+
+.dish-showcase {
+    padding-block: var(--section-space);
+}
+
+.dish-grid {
+    display: grid;
+    gap: var(--space-5);
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 36rem) {
+    .dish-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 60rem) {
+    .dish-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.dish-card {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    transition: transform var(--transition) var(--ease), box-shadow var(--transition) var(--ease);
+}
+
+.dish-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+}
+
+.dish-card__image-wrap {
+    aspect-ratio: 4/3;
+    overflow: hidden;
+}
+
+.dish-card__image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow) var(--ease);
+}
+
+.dish-card:hover .dish-card__image-wrap img {
+    transform: scale(1.04);
+}
+
+.dish-card__image-wrap[data-empty="true"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.4rem;
+    background: var(--color-bg-soft);
+}
+
+.dish-card__body {
+    padding: var(--space-4) var(--space-5) var(--space-5);
+}
+
+.dish-card__body h3 {
+    margin-bottom: 0.35rem;
+}
+
+.dish-card__body p {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+}
+
+/* Testimonials */
+
+.testimonials {
+    padding-block: var(--section-space);
+}
+
+.testimonial-grid {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 48rem) {
+    .testimonial-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.testimonial-card {
+    position: relative;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+}
+
+.testimonial-card__stars {
+    color: var(--color-primary);
+    letter-spacing: 0.15em;
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-2);
+}
+
+.testimonial-card__quote {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: var(--text-lg);
+    line-height: var(--leading-snug);
+    color: var(--color-text);
+    margin-bottom: var(--space-4);
+}
+
+.testimonial-card__author {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    margin: 0;
+}
+
+.testimonial-card__avatar {
+    width: 2.1rem;
+    height: 2.1rem;
+    font-size: var(--text-xs);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border);
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
+/* CTA banner — the one full-strength moment of the accent color on the whole
+   page; keep it singular so it still reads as a highlight, not wallpaper. */
+
+.cta-banner {
+    background: var(--color-primary);
+    color: var(--color-on-dark);
+    padding-block: var(--space-7);
+    margin-top: var(--section-space);
+}
+
+.cta-banner__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    text-align: center;
+}
+
+@media (min-width: 48rem) {
+    .cta-banner__inner {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
+    }
+}
+
+.cta-banner h2 {
+    color: var(--color-on-dark);
+    margin-bottom: 0.3rem;
+}
+
+.cta-banner p {
+    color: rgba(245, 238, 225, .85);
+    margin: 0;
+}
+
+.cta-banner .button {
+    background: var(--color-on-dark);
+    border-color: var(--color-on-dark);
+    color: var(--color-primary-dark);
+    flex: none;
+}
+
+.cta-banner .button:hover {
+    background: #fff;
+    border-color: #fff;
+    color: var(--color-primary-dark);
+}

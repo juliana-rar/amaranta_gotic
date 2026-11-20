@@ -1,0 +1,68 @@
+@inherits LayoutComponentBase
+@using PosReserva.Web.Data
+@inject SiteContentService ContentService
+@inject BusinessHoursService HoursService
+
+<div class="site">
+    <SiteHeader />
+
+    <main>
+        @Body
+    </main>
+
+    <footer class="site-footer">
+        <div class="container site-footer__grid">
+            <div class="site-footer__col">
+                <strong class="site-footer__brand">🍕 Pizzería del Puerto</strong>
+                <p>Cocina italiana tradicional, horno de leña y trato cercano frente al puerto.</p>
+                <div class="site-footer__social">
+                    <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">📷</a>
+                    <a href="tel:@content.ContactPhone.Replace(" ", "")" aria-label="Teléfono">📞</a>
+                    <a href="mailto:@content.ContactEmail" aria-label="Email">✉️</a>
+                </div>
+            </div>
+
+            <div class="site-footer__col">
+                <h3>Horario</h3>
+                @foreach (var hour in hours)
+                {
+                    <p><span class="site-footer__label">@BusinessHoursService.DayNames[hour.DayOrder]</span> @BusinessHoursService.FormatShifts(hour)</p>
+                }
+            </div>
+
+            <div class="site-footer__col">
+                <h3>Ubicación</h3>
+                @foreach (var line in content.LocationAddress.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    <p>@line</p>
+                }
+                <p><a href="tel:@content.ContactPhone.Replace(" ", "")">@content.ContactPhone</a></p>
+                <p><a href="mailto:@content.ContactEmail">@content.ContactEmail</a></p>
+            </div>
+        </div>
+
+        <div class="site-footer__bottom container">
+            <span>© @DateTime.Now.Year Pizzería del Puerto. Todos los derechos reservados.</span>
+            <a href="/reservar">Reservar mesa</a>
+        </div>
+    </footer>
+</div>
+
+<button type="button" class="to-top" aria-label="Volver arriba">↑</button>
+
+<div id="blazor-error-ui" data-nosnippet>
+    Ha ocurrido un error inesperado.
+    <a href="." class="reload">Recargar</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+@code {
+    private SiteContent content = new();
+    private List<BusinessHour> hours = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        content = await ContentService.GetAsync();
+        hours = await HoursService.GetAllAsync();
+    }
+}

@@ -1,0 +1,124 @@
+@page "/admin/testimonios"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@layout PosReserva.Web.Components.Layout.AdminLayout
+@using PosReserva.Web.Data
+@inject TestimonialService Testimonials
+
+<PageTitle>Panel · Testimonios</PageTitle>
+
+<div class="admin-page-head">
+    <h1>Testimonios</h1>
+    <p>Se muestran en la portada de la web, en el orden indicado.</p>
+</div>
+
+<div class="admin-card">
+    <h2 class="admin-form__section">@(editing.Id > 0 ? "Editar testimonio" : "Añadir testimonio")</h2>
+    <div class="admin-form">
+        <div class="field">
+            <label>Nombre del cliente</label>
+            <input class="input" @bind="editing.AuthorName" @bind:event="oninput" />
+        </div>
+        <div class="field">
+            <label>Opinión</label>
+            <textarea class="input" rows="3" @bind="editing.Quote"></textarea>
+        </div>
+        <div class="field">
+            <label>Orden</label>
+            <input type="number" class="input" @bind="editing.DisplayOrder" />
+        </div>
+        @if (error is not null)
+        {
+            <div class="field-error">@error</div>
+        }
+        <div class="admin-form__actions">
+            <button class="button" @onclick="SaveAsync">@(editing.Id > 0 ? "Guardar cambios" : "Añadir testimonio")</button>
+            @if (editing.Id > 0)
+            {
+                <button class="button" data-variant="outline" @onclick="ResetForm">Cancelar</button>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="admin-table-wrap">
+    @if (testimonials.Count == 0)
+    {
+        <p class="admin-empty">Todavía no hay testimonios. Añade el primero arriba.</p>
+    }
+    else
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Opinión</th>
+                    <th>Orden</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var testimonial in testimonials)
+                {
+                    <tr>
+                        <td class="admin-table__title">@testimonial.AuthorName</td>
+                        <td class="admin-table__desc">@testimonial.Quote</td>
+                        <td>@testimonial.DisplayOrder</td>
+                        <td>
+                            <div class="admin-table__actions">
+                                <button class="button" data-variant="outline" @onclick="() => Edit(testimonial)">Editar</button>
+                                <button class="button" data-variant="outline" @onclick="() => DeleteAsync(testimonial.Id)">Eliminar</button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@code {
+    private List<Testimonial> testimonials = new();
+    private Testimonial editing = new();
+    private string? error;
+
+    protected override async Task OnInitializedAsync() => testimonials = await Testimonials.GetAllAsync();
+
+    private void Edit(Testimonial testimonial) => editing = new Testimonial
+    {
+        Id = testimonial.Id,
+        AuthorName = testimonial.AuthorName,
+        Quote = testimonial.Quote,
+        DisplayOrder = testimonial.DisplayOrder
+    };
+
+    private void ResetForm()
+    {
+        editing = new Testimonial();
+        error = null;
+    }
+
+    private async Task SaveAsync()
+    {
+        error = null;
+        if (string.IsNullOrWhiteSpace(editing.AuthorName) || string.IsNullOrWhiteSpace(editing.Quote))
+        {
+            error = "Indica el nombre del cliente y la opinión.";
+            return;
+        }
+
+        if (editing.Id > 0)
+            await Testimonials.UpdateAsync(editing);
+        else
+            await Testimonials.CreateAsync(editing);
+
+        testimonials = await Testimonials.GetAllAsync();
+        ResetForm();
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        await Testimonials.DeleteAsync(id);
+        testimonials = await Testimonials.GetAllAsync();
+    }
+}

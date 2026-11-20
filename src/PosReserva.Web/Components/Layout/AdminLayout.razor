@@ -1,0 +1,21 @@
+@inherits LayoutComponentBase
+
+<div class="site">
+    <SiteHeader />
+
+    <div class="admin-shell">
+        <aside class="admin-sidebar">
+            <span class="admin-sidebar__brand">Panel de administración</span>
+            <nav class="admin-sidebar__nav">
+                <NavLink href="/admin" Match="NavLinkMatch.All">🍽️ Platos</NavLink>
+                <NavLink href="/admin/galeria">🖼️ Galería</NavLink>
+                <NavLink href="/admin/testimonios">💬 Testimonios</NavLink>
+                <NavLink href="/admin/contenido">📝 Contenido</NavLink>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            @Body
+        </main>
+    </div>
+</div>

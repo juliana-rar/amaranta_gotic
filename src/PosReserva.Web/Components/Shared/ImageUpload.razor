@@ -1,0 +1,56 @@
+@using Microsoft.AspNetCore.Components.Forms
+@inject IWebHostEnvironment Env
+
+<div class="imgpick">
+    @if (!string.IsNullOrWhiteSpace(Value))
+    {
+        <img src="@Value" alt="" class="imgpick__preview" />
+    }
+    <InputFile OnChange="OnSelected" accept="image/png,image/jpeg,image/webp,image/gif" class="imgpick__input" />
+    @if (_error is not null)
+    {
+        <div class="field-error">@_error</div>
+    }
+</div>
+
+@code {
+    private const long MaxBytes = 5 * 1024 * 1024;
+    private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
+    { ".png", ".jpg", ".jpeg", ".webp", ".gif" };
+
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+    [Parameter, EditorRequired] public string Folder { get; set; } = "misc";
+
+    private string? _error;
+
+    private async Task OnSelected(InputFileChangeEventArgs e)
+    {
+        _error = null;
+        var file = e.File;
+        var ext = Path.GetExtension(file.Name);
+        if (!AllowedExtensions.Contains(ext))
+        {
+            _error = "Formato no admitido. Usa PNG, JPG, WEBP o GIF.";
+            return;
+        }
+        if (file.Size > MaxBytes)
+        {
+            _error = "La imagen pesa demasiado (máximo 5 MB).";
+            return;
+        }
+
+        var dir = Path.Combine(Env.WebRootPath, "uploads", Folder);
+        Directory.CreateDirectory(dir);
+        var fileName = $"{Guid.NewGuid():N}{ext.ToLowerInvariant()}";
+
+        await using (var output = File.Create(Path.Combine(dir, fileName)))
+        await using (var input = file.OpenReadStream(MaxBytes))
+        {
+            await input.CopyToAsync(output);
+        }
+
+        Value = $"/uploads/{Folder}/{fileName}";
+        await ValueChanged.InvokeAsync(Value);
+    }
+}

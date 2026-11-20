@@ -1,0 +1,220 @@
+@page "/admin/contenido"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@layout PosReserva.Web.Components.Layout.AdminLayout
+@using PosReserva.Web.Data
+@inject SiteContentService ContentService
+@inject BusinessHoursService HoursService
+
+<PageTitle>Panel · Contenido del sitio</PageTitle>
+
+<div class="admin-page-head">
+    <h1>Textos del sitio</h1>
+    <p>Controla el hero, las estadísticas, "por qué elegirnos", la historia, ubicación y contacto.</p>
+</div>
+
+<div class="admin-card admin-card--wide">
+        <div class="admin-form">
+            <h2 class="admin-form__section">Hero (Inicio)</h2>
+            <div class="field"><label>Insignia</label><input class="input" @bind="model.HeroEyebrow" /></div>
+            <div class="field"><label>Título</label><input class="input" @bind="model.HeroTitle" /></div>
+            <div class="field"><label>Subtítulo</label><textarea class="input" rows="2" @bind="model.HeroSubtitle"></textarea></div>
+
+            <h2 class="admin-form__section">Estadísticas de confianza</h2>
+            <div class="admin-form__row">
+                <div class="field"><label>Cifra 1</label><input class="input" @bind="model.Stat1Number" /></div>
+                <div class="field"><label>Etiqueta 1</label><input class="input" @bind="model.Stat1Label" /></div>
+            </div>
+            <div class="admin-form__row">
+                <div class="field"><label>Cifra 2</label><input class="input" @bind="model.Stat2Number" /></div>
+                <div class="field"><label>Etiqueta 2</label><input class="input" @bind="model.Stat2Label" /></div>
+            </div>
+            <div class="admin-form__row">
+                <div class="field"><label>Cifra 3</label><input class="input" @bind="model.Stat3Number" /></div>
+                <div class="field"><label>Etiqueta 3</label><input class="input" @bind="model.Stat3Label" /></div>
+            </div>
+            <div class="admin-form__row">
+                <div class="field"><label>Cifra 4</label><input class="input" @bind="model.Stat4Number" /></div>
+                <div class="field"><label>Etiqueta 4</label><input class="input" @bind="model.Stat4Label" /></div>
+            </div>
+
+            <h2 class="admin-form__section">Por qué elegirnos</h2>
+            @for (var i = 1; i <= 3; i++)
+            {
+                var n = i;
+                <div class="admin-form__row" data-cols="3">
+                    <div class="field"><label>Icono @n</label><input class="input" value="@GetFeatureIcon(n)" @oninput="e => SetFeatureIcon(n, e)" /></div>
+                    <div class="field"><label>Título @n</label><input class="input" value="@GetFeatureTitle(n)" @oninput="e => SetFeatureTitle(n, e)" /></div>
+                    <div class="field"><label>Descripción @n</label><input class="input" value="@GetFeatureDescription(n)" @oninput="e => SetFeatureDescription(n, e)" /></div>
+                </div>
+            }
+
+            <h2 class="admin-form__section">Categorías del menú</h2>
+            <div class="admin-form__row" data-cols="4">
+                <div class="field">
+                    <label>Imagen — Entrantes</label>
+                    <ImageUpload @bind-Value="model.Category1Image" Folder="categories" />
+                </div>
+                <div class="field">
+                    <label>Imagen — Pizzas</label>
+                    <ImageUpload @bind-Value="model.Category2Image" Folder="categories" />
+                </div>
+                <div class="field">
+                    <label>Imagen — Postres</label>
+                    <ImageUpload @bind-Value="model.Category3Image" Folder="categories" />
+                </div>
+                <div class="field">
+                    <label>Imagen — Bebidas</label>
+                    <ImageUpload @bind-Value="model.Category4Image" Folder="categories" />
+                </div>
+            </div>
+            <div class="admin-form__row" data-cols="4">
+                <div class="field"><label>Título 1</label><input class="input" @bind="model.Category1Title" /></div>
+                <div class="field"><label>Título 2</label><input class="input" @bind="model.Category2Title" /></div>
+                <div class="field"><label>Título 3</label><input class="input" @bind="model.Category3Title" /></div>
+                <div class="field"><label>Título 4</label><input class="input" @bind="model.Category4Title" /></div>
+            </div>
+            <div class="admin-form__row" data-cols="4">
+                <div class="field"><label>Descripción 1</label><input class="input" @bind="model.Category1Description" /></div>
+                <div class="field"><label>Descripción 2</label><input class="input" @bind="model.Category2Description" /></div>
+                <div class="field"><label>Descripción 3</label><input class="input" @bind="model.Category3Description" /></div>
+                <div class="field"><label>Descripción 4</label><input class="input" @bind="model.Category4Description" /></div>
+            </div>
+
+            <h2 class="admin-form__section">Nuestra historia</h2>
+            <div class="field"><label>Insignia</label><input class="input" @bind="model.StoryEyebrow" /></div>
+            <div class="field"><label>Título</label><input class="input" @bind="model.StoryTitle" /></div>
+            <div class="field"><label>Párrafo 1</label><textarea class="input" rows="2" @bind="model.StoryParagraph1"></textarea></div>
+            <div class="field"><label>Párrafo 2</label><textarea class="input" rows="2" @bind="model.StoryParagraph2"></textarea></div>
+            <div class="field"><label>Cita destacada</label><input class="input" @bind="model.StoryQuote" /></div>
+            <div class="field"><label>Autor de la cita</label><input class="input" @bind="model.StoryQuoteAuthor" /></div>
+
+            <h2 class="admin-form__section">Ubicación</h2>
+            <div class="field"><label>Dirección</label><textarea class="input" rows="2" @bind="model.LocationAddress"></textarea></div>
+
+            <div class="field">
+                <label>Horario</label>
+                <div class="hours-editor">
+                    @foreach (var day in days)
+                    {
+                        <div class="hours-editor__row">
+                            <label class="hours-editor__day">
+                                <input type="checkbox" @bind="day.IsOpen" />
+                                @day.Name
+                            </label>
+                            @if (day.IsOpen)
+                            {
+                                <div class="hours-editor__shift">
+                                    <input type="time" class="input" @bind="day.Shift1Start" />
+                                    <span>–</span>
+                                    <input type="time" class="input" @bind="day.Shift1End" />
+                                </div>
+                                <label class="hours-editor__shift2-toggle">
+                                    <input type="checkbox" @bind="day.HasShift2" /> 2º turno
+                                </label>
+                                @if (day.HasShift2)
+                                {
+                                    <div class="hours-editor__shift">
+                                        <input type="time" class="input" @bind="day.Shift2Start" />
+                                        <span>–</span>
+                                        <input type="time" class="input" @bind="day.Shift2End" />
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <span class="hours-editor__closed">Cerrado</span>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <h2 class="admin-form__section">Contacto</h2>
+            <div class="field"><label>Teléfono</label><input class="input" @bind="model.ContactPhone" /></div>
+            <div class="field"><label>Email</label><input class="input" @bind="model.ContactEmail" /></div>
+            <div class="field"><label>Instagram</label><input class="input" @bind="model.ContactInstagram" /></div>
+
+            @if (saved)
+            {
+                <div class="reserve-form__message" data-kind="success">Cambios guardados.</div>
+            }
+
+            <button class="button" @onclick="SaveAsync">Guardar cambios</button>
+        </div>
+    </div>
+
+@code {
+    private SiteContent model = new();
+    private List<DayRow> days = new();
+    private bool saved;
+
+    protected override async Task OnInitializedAsync()
+    {
+        model = await ContentService.GetAsync();
+
+        var hours = await HoursService.GetAllAsync();
+        days = hours.Select(h => new DayRow
+        {
+            Hour = h,
+            Name = BusinessHoursService.DayNames[h.DayOrder],
+            IsOpen = h.IsOpen,
+            Shift1Start = h.Shift1Start ?? new TimeOnly(13, 0),
+            Shift1End = h.Shift1End ?? new TimeOnly(16, 0),
+            HasShift2 = h.Shift2Start.HasValue,
+            Shift2Start = h.Shift2Start ?? new TimeOnly(20, 0),
+            Shift2End = h.Shift2End ?? new TimeOnly(23, 0),
+        }).ToList();
+    }
+
+    private async Task SaveAsync()
+    {
+        await ContentService.UpdateAsync(model);
+
+        foreach (var day in days)
+        {
+            day.Hour.IsOpen = day.IsOpen;
+            day.Hour.Shift1Start = day.IsOpen ? day.Shift1Start : null;
+            day.Hour.Shift1End = day.IsOpen ? day.Shift1End : null;
+            day.Hour.Shift2Start = day.IsOpen && day.HasShift2 ? day.Shift2Start : null;
+            day.Hour.Shift2End = day.IsOpen && day.HasShift2 ? day.Shift2End : null;
+        }
+        await HoursService.UpdateAllAsync(days.Select(d => d.Hour).ToList());
+
+        saved = true;
+    }
+
+    private sealed class DayRow
+    {
+        public BusinessHour Hour { get; set; } = null!;
+        public string Name { get; set; } = "";
+        public bool IsOpen { get; set; }
+        public bool HasShift2 { get; set; }
+        public TimeOnly Shift1Start { get; set; }
+        public TimeOnly Shift1End { get; set; }
+        public TimeOnly Shift2Start { get; set; }
+        public TimeOnly Shift2End { get; set; }
+    }
+
+    private string GetFeatureIcon(int n) => n switch { 1 => model.Feature1Icon, 2 => model.Feature2Icon, _ => model.Feature3Icon };
+    private string GetFeatureTitle(int n) => n switch { 1 => model.Feature1Title, 2 => model.Feature2Title, _ => model.Feature3Title };
+    private string GetFeatureDescription(int n) => n switch { 1 => model.Feature1Description, 2 => model.Feature2Description, _ => model.Feature3Description };
+
+    private void SetFeatureIcon(int n, Microsoft.AspNetCore.Components.ChangeEventArgs e)
+    {
+        var value = e.Value?.ToString() ?? "";
+        if (n == 1) model.Feature1Icon = value; else if (n == 2) model.Feature2Icon = value; else model.Feature3Icon = value;
+    }
+
+    private void SetFeatureTitle(int n, Microsoft.AspNetCore.Components.ChangeEventArgs e)
+    {
+        var value = e.Value?.ToString() ?? "";
+        if (n == 1) model.Feature1Title = value; else if (n == 2) model.Feature2Title = value; else model.Feature3Title = value;
+    }
+
+    private void SetFeatureDescription(int n, Microsoft.AspNetCore.Components.ChangeEventArgs e)
+    {
+        var value = e.Value?.ToString() ?? "";
+        if (n == 1) model.Feature1Description = value; else if (n == 2) model.Feature2Description = value; else model.Feature3Description = value;
+    }
+}

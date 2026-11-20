@@ -1,0 +1,55 @@
+@page "/menu"
+
+<PageTitle>Menú · Pizzería del Puerto</PageTitle>
+
+<section class="page-hero">
+    <div class="container">
+        <h1>Nuestro menú</h1>
+        <p>Una selección de nuestros platos más pedidos. Carta completa disponible en el local.</p>
+    </div>
+</section>
+
+<section class="container page-section">
+    @foreach (var category in Categories)
+    {
+        <div class="menu-category">
+            <h2>@category.Name</h2>
+            @foreach (var item in category.Items)
+            {
+                <div class="menu-item">
+                    <span>@item.Name</span>
+                    <span class="menu-item__price">@item.Price.ToString("0.00")&nbsp;€</span>
+                </div>
+            }
+        </div>
+    }
+</section>
+
+@code {
+    private sealed record MenuItem(string Name, decimal Price);
+    private sealed record MenuCategory(string Name, MenuItem[] Items);
+
+    private static readonly MenuCategory[] Categories =
+    [
+        new("Entrantes", [
+            new("Bruschetta de tomate y albahaca", 6.50m),
+            new("Burrata con jamón de bellota", 12.00m),
+            new("Croquetas de la casa", 7.50m),
+        ]),
+        new("Pizzas", [
+            new("Margherita", 9.50m),
+            new("Diávola", 11.00m),
+            new("Cuatro quesos", 12.50m),
+            new("Del Puerto (mariscos)", 15.00m),
+        ]),
+        new("Postres", [
+            new("Tiramisú", 5.50m),
+            new("Panna cotta", 5.00m),
+        ]),
+        new("Bebidas", [
+            new("Copa de vino de la casa", 4.00m),
+            new("Refresco", 2.50m),
+            new("Agua", 2.00m),
+        ]),
+    ];
+}

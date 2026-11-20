@@ -1,0 +1,255 @@
+@page "/reservar"
+@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@using PosReserva.Web.Models
+@using PosReserva.Web.Services
+@inject ReservationApiClient Api
+
+<PageTitle>Reservar mesa · Pizzería del Puerto</PageTitle>
+
+<section class="container page-section">
+    <h1 style="text-align:center">Reserva tu mesa</h1>
+
+    <div class="resv-page card">
+        @if (submitted)
+        {
+            <div class="resv-success">
+                <div class="resv-success__circle">✓</div>
+                <p class="resv-success__text">
+                    ¡Gracias, @model.CustomerName! Hemos recibido tu solicitud para el
+                    @model.Date.ToString("dd/MM/yyyy") a las @time.ToString("HH:mm").
+                    Te confirmaremos por teléfono en breve.
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="resv-steps">
+                <div class="resv-steps__track"></div>
+                <div class="resv-steps__progress" style="width:@(ProgressPercent)%"></div>
+                @foreach (var s in Steps)
+                {
+                    <button type="button"
+                            class="resv-step @(s.Number == step ? "resv-step--on" : "") @(s.Number < maxStep && s.Number != step ? "resv-step--done" : "")"
+                            disabled="@(s.Number > maxStep)" @onclick="() => GoToStep(s.Number)">
+                        <span class="resv-step__num">@(s.Number < maxStep ? "✓" : s.Number.ToString())</span>
+                        <span class="resv-step__label">@s.Label</span>
+                    </button>
+                }
+            </div>
+
+            <div class="resv-step-panel">
+                @if (step == 1)
+                {
+                    <div class="field">
+                        <label>Nombre</label>
+                        <input class="input" @bind="model.CustomerName" @bind:event="oninput" />
+                    </div>
+                    <div class="field">
+                        <label>Teléfono</label>
+                        <input class="input" @bind="model.Phone" @bind:event="oninput" />
+                    </div>
+                    <div class="resv-row resv-row--guest">
+                        <div class="field"><label>Comensales</label><input type="number" min="1" max="20" class="input" @bind="model.PartySize" /></div>
+                        <div class="field"><label>🍼 Niños</label><input type="number" min="0" max="20" class="input" @bind="model.ChildrenCount" /></div>
+                        <div class="field"><label>🪑 Tronas</label><input type="number" min="0" max="20" class="input" @bind="model.HighChairCount" /></div>
+                    </div>
+                }
+                else if (step == 2)
+                {
+                    <div class="field">
+                        <label>Fecha</label>
+                        <input type="date" class="input" @bind="model.Date" />
+                    </div>
+                    <div class="field"><label>Total comensales</label><div class="field-static">@TotalGuests personas</div></div>
+                }
+                else if (step == 3)
+                {
+                    <div class="period-picker">
+                        <button type="button" class="period-opt @(IsLunch ? "period-opt--on" : "")" @onclick="() => PickPeriod(true)">
+                            <span class="period-opt__label">☀️ Comida</span>
+                            <span class="period-opt__time">13:00–16:00</span>
+                        </button>
+                        <button type="button" class="period-opt @(!IsLunch ? "period-opt--on" : "")" @onclick="() => PickPeriod(false)">
+                            <span class="period-opt__label">🌙 Cena</span>
+                            <span class="period-opt__time">20:00–23:00</span>
+                        </button>
+                    </div>
+                    <div class="slot-grid">
+                        @foreach (var slot in CurrentSlots)
+                        {
+                            <button type="button" class="slot-chip @(slot == time ? "slot-chip--on" : "")" @onclick="() => time = slot">@slot.ToString("HH:mm")</button>
+                        }
+                    </div>
+                }
+                else if (step == 4)
+                {
+                    <div class="resv-summary__title">Resumen de la reserva</div>
+                    <div class="resv-summary">
+                        <div class="resv-summary__row">
+                            👤 @(string.IsNullOrWhiteSpace(model.CustomerName) ? "Sin nombre" : model.CustomerName)
+                            @if (!string.IsNullOrWhiteSpace(model.Phone)) { <span class="muted"> · @model.Phone</span> }
+                        </div>
+                        <div class="resv-summary__row">
+                            👥 @TotalGuests personas
+                            @if (model.ChildrenCount > 0) { <span class="muted"> · 🍼 @model.ChildrenCount</span> }
+                            @if (model.HighChairCount > 0) { <span class="muted"> · 🪑 @model.HighChairCount</span> }
+                        </div>
+                        <div class="resv-summary__row">📅 @model.Date.ToString("dd MMM yyyy")</div>
+                        <div class="resv-summary__row">@(IsLunch ? "☀️ Comida" : "🌙 Cena") · @time.ToString("HH:mm")</div>
+                    </div>
+                    <div class="field">
+                        <label>Comentarios (alergias, ocasión especial...)</label>
+                        <textarea class="input" rows="2" @bind="model.Comments"></textarea>
+                    </div>
+                }
+
+                @if (errorMessage is not null)
+                {
+                    <div class="field-error">@errorMessage</div>
+                }
+            </div>
+
+            <div class="resv-nav @(step == Steps.Length ? "resv-nav--joined" : "")">
+                @if (step > 1)
+                {
+                    <button type="button" class="btn btn--ghost resv-nav__back--full" @onclick="GoBack">← Atrás</button>
+                }
+                @if (step < Steps.Length)
+                {
+                    <button type="button" class="btn btn--primary resv-nav__next" disabled="@(!CanAdvance)" @onclick="GoNext">Siguiente →</button>
+                }
+                else
+                {
+                    <button type="button" class="btn btn--primary resv-nav__next" disabled="@isSubmitting" @onclick="SubmitAsync">
+                        @(isSubmitting ? "Enviando..." : "Solicitar reserva")
+                    </button>
+                }
+            </div>
+        }
+    </div>
+</section>
+
+@code {
+    private sealed record Step(int Number, string Label);
+
+    private static readonly Step[] Steps =
+    [
+        new(1, "Datos"),
+        new(2, "Fecha"),
+        new(3, "Hora"),
+        new(4, "Resumen"),
+    ];
+
+    private static readonly TimeOnly LunchStart = new(13, 0);
+    private static readonly TimeOnly LunchEnd = new(16, 0);
+    private static readonly TimeOnly DinnerStart = new(20, 0);
+    private static readonly TimeOnly DinnerEnd = new(23, 0);
+
+    private readonly ReservationFormModel model = new();
+    private TimeOnly time = LunchStart;
+    private int step = 1;
+    private int maxStep = 1;
+    private bool isSubmitting;
+    private bool submitted;
+    private string? errorMessage;
+
+    private bool IsLunch => time >= LunchStart && time < DinnerStart;
+    private int TotalGuests => model.PartySize + model.ChildrenCount;
+    private int ProgressPercent => (int)((step - 1) / (double)(Steps.Length - 1) * 100);
+
+    private IEnumerable<TimeOnly> CurrentSlots
+    {
+        get
+        {
+            var (start, end) = IsLunch ? (LunchStart, LunchEnd) : (DinnerStart, DinnerEnd);
+            for (var t = start; t < end; t = t.AddMinutes(30))
+                yield return t;
+        }
+    }
+
+    private bool CanAdvance => step switch
+    {
+        1 => !string.IsNullOrWhiteSpace(model.CustomerName) && model.PartySize is >= 1 and <= 20,
+        2 => model.Date.Date >= DateTime.Today,
+        _ => true
+    };
+
+    private void PickPeriod(bool lunch) => time = lunch ? LunchStart : DinnerStart;
+
+    private void GoNext()
+    {
+        errorMessage = null;
+        if (!CanAdvance)
+        {
+            errorMessage = step == 1 ? "Indica tu nombre y el número de comensales." : "La fecha no puede ser anterior a hoy.";
+            return;
+        }
+        if (step < Steps.Length) step++;
+        if (step > maxStep) maxStep = step;
+    }
+
+    private void GoBack()
+    {
+        errorMessage = null;
+        if (step > 1) step--;
+    }
+
+    private void GoToStep(int target)
+    {
+        if (target <= maxStep) step = target;
+    }
+
+    private async Task SubmitAsync()
+    {
+        errorMessage = null;
+        isSubmitting = true;
+        try
+        {
+            var request = new PublicReservationRequest
+            {
+                CustomerName = model.CustomerName.Trim(),
+                Phone = string.IsNullOrWhiteSpace(model.Phone) ? null : model.Phone.Trim(),
+                Date = model.Date.Date,
+                Time = time,
+                PartySize = model.PartySize,
+                ChildrenCount = model.ChildrenCount,
+                HighChairCount = model.HighChairCount,
+                Comments = model.Comments
+            };
+
+            var result = await Api.CreateAsync(request);
+            if (result.Success)
+                submitted = true;
+            else
+                errorMessage = result.ErrorMessage;
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private sealed class ReservationFormModel
+    {
+        [Required, StringLength(100)]
+        public string CustomerName { get; set; } = string.Empty;
+
+        [StringLength(30)]
+        public string? Phone { get; set; }
+
+        public DateTime Date { get; set; } = DateTime.Today.AddDays(1);
+
+        [Range(1, 20)]
+        public int PartySize { get; set; } = 2;
+
+        [Range(0, 20)]
+        public int ChildrenCount { get; set; }
+
+        [Range(0, 20)]
+        public int HighChairCount { get; set; }
+
+        [StringLength(500)]
+        public string? Comments { get; set; }
+    }
+}

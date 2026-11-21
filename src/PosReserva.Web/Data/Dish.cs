@@ -6,5 +6,8 @@ public class Dish
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string ImageUrl { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
+    public string PriceText { get; set; } = string.Empty;
+    public bool ShowOnHome { get; set; } = false;
     public int DisplayOrder { get; set; }
 }

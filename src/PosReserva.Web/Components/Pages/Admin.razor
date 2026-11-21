@@ -5,11 +5,11 @@
 @using PosReserva.Web.Data
 @inject DishService Dishes
 
-<PageTitle>Panel · Platos destacados</PageTitle>
+<PageTitle>Panel · Carta · Amaranta Gótico</PageTitle>
 
 <div class="admin-page-head">
-    <h1>Platos destacados</h1>
-    <p>Se muestran en la portada de la web, en el orden indicado.</p>
+    <h1>Platos de la carta</h1>
+    <p>Se muestran en la carta y, si indicas portada, también en la portada de la web, en el orden indicado.</p>
 </div>
 
 <div class="admin-card">
@@ -24,12 +24,23 @@
             <textarea class="input" rows="2" @bind="editing.Description"></textarea>
         </div>
         <div class="field">
+            <label>Categoría</label>
+            <input class="input" @bind="editing.Category" @bind:event="oninput" />
+        </div>
+        <div class="field">
+            <label>Precio</label>
+            <input class="input" @bind="editing.PriceText" @bind:event="oninput" />
+        </div>
+        <div class="field">
             <label>Imagen</label>
             <ImageUpload @bind-Value="editing.ImageUrl" Folder="dishes" />
         </div>
         <div class="field">
             <label>Orden</label>
             <input type="number" class="input" @bind="editing.DisplayOrder" />
+        </div>
+        <div class="field">
+            <label><input type="checkbox" @bind="editing.ShowOnHome" /> Mostrar en la portada</label>
         </div>
         @if (error is not null)
         {
@@ -48,7 +59,7 @@
 <div class="admin-table-wrap">
     @if (dishes.Count == 0)
     {
-        <p class="admin-empty">Todavía no hay platos destacados. Añade el primero arriba.</p>
+        <p class="admin-empty">Todavía no hay platos en la carta. Añade el primero arriba.</p>
     }
     else
     {
@@ -58,6 +69,9 @@
                     <th></th>
                     <th>Título</th>
                     <th>Descripción</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Portada</th>
                     <th>Orden</th>
                     <th></th>
                 </tr>
@@ -74,6 +88,9 @@
                         </td>
                         <td class="admin-table__title">@dish.Title</td>
                         <td class="admin-table__desc">@dish.Description</td>
+                        <td>@dish.Category</td>
+                        <td>@dish.PriceText</td>
+                        <td>@(dish.ShowOnHome ? "Sí" : "No")</td>
                         <td>@dish.DisplayOrder</td>
                         <td>
                             <div class="admin-table__actions">
@@ -101,6 +118,9 @@
         Title = dish.Title,
         Description = dish.Description,
         ImageUrl = dish.ImageUrl,
+        Category = dish.Category,
+        PriceText = dish.PriceText,
+        ShowOnHome = dish.ShowOnHome,
         DisplayOrder = dish.DisplayOrder
     };
 

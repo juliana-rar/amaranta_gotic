@@ -1,19 +1,22 @@
+@using PosReserva.Web.Services
 @inject NavigationManager Nav
+@inject SiteTextService Texts
 
 <header class="site-header" data-hero="@(IsHeroPage ? "true" : "false")">
     <div class="container site-header__inner">
         <a class="site-header__brand" href="/">
-            <span class="site-header__brand-mark">🍕</span>
-            Pizzería del Puerto
+            <span class="site-header__brand-mark"><img src="images/amaranta-logo.png" alt="" /></span>
+            Amaranta Gótico
         </a>
         <input type="checkbox" id="nav-toggle" class="site-header__toggle" />
         <label for="nav-toggle" class="site-header__burger">☰</label>
         <nav class="site-nav">
-            <NavLink href="/" Match="NavLinkMatch.All">Inicio</NavLink>
-            <NavLink href="/menu">Menú</NavLink>
-            <NavLink href="/ubicacion">Ubicación</NavLink>
-            <NavLink href="/contacto">Contacto</NavLink>
-            <NavLink href="/reservar" class="site-nav__cta">Reservar mesa</NavLink>
+            <NavLink href="/" Match="NavLinkMatch.All">@T("nav.home")</NavLink>
+            <NavLink href="/menu">@T("nav.menu")</NavLink>
+            <NavLink href="/grupos">@T("nav.groups")</NavLink>
+            <NavLink href="/ubicacion">@T("nav.location")</NavLink>
+            <NavLink href="/contacto">@T("nav.contact")</NavLink>
+            <NavLink href="/reservar" class="site-nav__cta">@T("nav.reserve")</NavLink>
             <AuthorizeView>
                 <Authorized>
                     <NavLink href="/admin">Panel</NavLink>
@@ -28,7 +31,13 @@
 
 @code {
     // Pages that open with a dark hero/banner section the header can float over transparently.
-    private static readonly string[] HeroPaths = ["/", "/menu", "/ubicacion", "/contacto"];
+    private static readonly string[] HeroPaths = ["/", "/menu", "/grupos", "/ubicacion", "/contacto"];
+
+    private Dictionary<string, string> texts = new();
+
+    private string T(string key) => texts.TryGetValue(key, out var value) ? value : key;
 
     private bool IsHeroPage => HeroPaths.Contains(new Uri(Nav.Uri).AbsolutePath);
+
+    protected override async Task OnInitializedAsync() => texts = await Texts.GetAsync();
 }

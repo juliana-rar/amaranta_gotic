@@ -1,0 +1,111 @@
+@page "/grupos"
+@using PosReserva.Web.Data
+@inject SiteTextService Texts
+@inject SiteContentService ContentService
+
+<PageTitle>Grupos y eventos · Amaranta Gótico</PageTitle>
+
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">@T("grupos.hero.eyebrow")</span>
+        <h1>@T("grupos.hero.title")</h1>
+        <p>@T("grupos.hero.text")</p>
+    </div>
+</section>
+
+<section class="container page-section">
+    <div class="section-head">
+        <h2>@T("grupos.s1.title")</h2>
+    </div>
+    <div class="info-grid">
+        <div class="menu-category">
+            <h2>@T("grupos.s1.col1.title")</h2>
+            <div class="menu-item">
+                <span>@T("grupos.s1.col1.line1")</span>
+            </div>
+            <div class="menu-item">
+                <span>@T("grupos.s1.col1.line2")</span>
+            </div>
+            <div class="menu-item">
+                <span>@T("grupos.s1.col1.line3")</span>
+            </div>
+        </div>
+        <div class="menu-category">
+            <h2>@T("grupos.s1.col2.title")</h2>
+            <div class="menu-item">
+                <span>@T("grupos.s1.col2.line1")</span>
+            </div>
+            <div class="menu-item">
+                <span>@T("grupos.s1.col2.line2")</span>
+            </div>
+            <div class="menu-item">
+                <span>@T("grupos.s1.col2.line3")</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container page-section">
+    <div class="section-head">
+        <h2>@T("grupos.s2.title")</h2>
+    </div>
+    <div class="info-grid">
+        <div class="menu-category">
+            <h2>@T("grupos.s2.col1.title")</h2>
+            <div class="menu-item">
+                <span>@T("grupos.s2.col1.line1")</span>
+            </div>
+            <div class="menu-item">
+                <span>@T("grupos.s2.col1.line2")</span>
+            </div>
+            <div class="menu-item">
+                <span>@T("grupos.s2.col1.line3")</span>
+            </div>
+        </div>
+        <div class="menu-category">
+            <h2>@T("grupos.s2.col2.title")</h2>
+            <div class="menu-item">
+                <span>@T("grupos.s2.col2.line1")</span>
+            </div>
+            <div class="menu-item">
+                <span>@T("grupos.s2.col2.line2")</span>
+            </div>
+            <div class="menu-item">
+                <span>@T("grupos.s2.col2.line3")</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container page-section">
+    <div class="section-head">
+        <h2>@T("grupos.s3.title")</h2>
+    </div>
+    <div class="info-grid">
+        <div class="contact-card">
+            <h3>@T("grupos.s3.phone.label")</h3>
+            <p><a href="tel:@content.ContactPhone.Replace(" ", "")">@content.ContactPhone</a></p>
+        </div>
+        <div class="contact-card">
+            <h3>@T("grupos.s3.email.label")</h3>
+            <p><a href="mailto:@content.ContactEmail">@content.ContactEmail</a></p>
+        </div>
+    </div>
+    <div class="button-row">
+        <a class="button" href="/contacto">@T("grupos.s3.cta1")</a>
+        <a class="button" href="/reservar">@T("grupos.s3.cta2")</a>
+    </div>
+</section>
+
+@code {
+    private Dictionary<string, string> texts = new();
+    private SiteContent content = new();
+
+    private string T(string key) => texts.TryGetValue(key, out var value) ? value : key;
+
+    protected override async Task OnInitializedAsync()
+    {
+        texts = await Texts.GetAsync();
+        content = await ContentService.GetAsync();
+    }
+}

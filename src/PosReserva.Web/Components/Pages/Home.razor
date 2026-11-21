@@ -1,11 +1,12 @@
 @page "/"
 @using PosReserva.Web.Data
+@inject SiteTextService Texts
 @inject SiteContentService ContentService
 @inject DishService DishService
 @inject TestimonialService TestimonialService
 @inject GalleryService GalleryService
 
-<PageTitle>Pizzería del Puerto</PageTitle>
+<PageTitle>Amaranta Gótico · Brasería en el Barrio Gótico</PageTitle>
 
 <section class="hero">
     <div class="hero__bg" style="@HeroStyle"></div>
@@ -15,20 +16,20 @@
         <h1>@content.HeroTitle</h1>
         <p>@content.HeroSubtitle</p>
         <div class="hero__actions">
-            <a class="button" data-size="lg" href="/reservar">Reservar mesa</a>
-            <a class="button" data-variant="outline" data-size="lg" href="/menu">Ver el menú</a>
+            <a class="button" data-size="lg" href="/reservar">@T("home.hero.cta")</a>
+            <a class="button" data-variant="outline" data-size="lg" href="/menu">@T("home.hero.secondary")</a>
         </div>
         <div class="hero__trust">
-            <span class="hero__trust-item">⭐⭐⭐⭐⭐ <strong>4.8</strong> en Google</span>
-            <span class="hero__trust-item">✅ Confirmación <strong>al instante</strong></span>
-            <span class="hero__trust-item">📍 <strong>Paseo del Puerto</strong></span>
+            <span class="hero__trust-item">@T("home.hero.trust1")</span>
+            <span class="hero__trust-item">@T("home.hero.trust2")</span>
+            <span class="hero__trust-item">@T("home.hero.trust3")</span>
         </div>
     </div>
 </section>
 
 <section class="menu-band">
     <div class="container">
-        <h2 class="menu-band__title reveal">Nuestra carta</h2>
+        <h2 class="menu-band__title reveal">@T("home.menu.title")</h2>
         <div class="menu-band__grid stagger">
             @foreach (var category in MenuCategories)
             {
@@ -47,7 +48,7 @@
             }
         </div>
         <div class="menu-band__cta reveal">
-            <a class="button" data-size="lg" href="/menu">Ver la carta completa</a>
+            <a class="button" data-size="lg" href="/menu">@T("home.menu.cta")</a>
         </div>
     </div>
 </section>
@@ -72,29 +73,29 @@
 
 <section class="origin container stagger">
     <div class="origin__block reveal">
-        <h2>Nuestro origen</h2>
+        <h2>@T("home.origin.heading1")</h2>
         <p>@content.StoryParagraph1</p>
     </div>
     <div class="origin__block reveal">
-        <h2>Certificado de calidad</h2>
+        <h2>@T("home.origin.heading2")</h2>
         <p>@content.StoryParagraph2</p>
     </div>
     <div class="origin__block reveal">
-        <h2>Nuestro lema</h2>
+        <h2>@T("home.origin.heading3")</h2>
         <p>"@content.StoryQuote" — @content.StoryQuoteAuthor</p>
     </div>
 </section>
 
 <section class="ribbon">
-    <a class="reveal" href="/reservar">¡Reserva tu mesa en Pizzería del Puerto! Llama al @content.ContactPhone</a>
+    <a class="reveal" href="/reservar">@T("home.ribbon").Replace("{phone}", content.ContactPhone)</a>
 </section>
 
 <section class="break">
     <div class="hero__bg" style="@BreakStyle"></div>
     <div class="hero__overlay"></div>
     <div class="container break__inner reveal">
-        <h2>Prueba nuestras pizzas y personalízalas en 3 pasos</h2>
-        <a class="button" data-size="lg" href="/reservar">Cómo funciona</a>
+        <h2>@T("home.break.title")</h2>
+        <a class="button" data-size="lg" href="/grupos">@T("home.break.cta")</a>
     </div>
 </section>
 
@@ -102,8 +103,8 @@
 {
     <section class="dish-showcase container">
         <div class="section-head reveal" data-align="center">
-            <span class="eyebrow">Novedades</span>
-            <h2>¡Ven a probar nuestras novedades!</h2>
+            <span class="eyebrow">@T("home.dishes.eyebrow")</span>
+            <h2>@T("home.dishes.title")</h2>
         </div>
         <div class="dish-grid stagger">
             @foreach (var dish in dishes)
@@ -115,10 +116,16 @@
                     }
                     else
                     {
-                        <div class="dish-card__image-wrap" data-empty="true">🍕</div>
+                        <div class="dish-card__image-wrap" data-empty="true">🔥</div>
                     }
                     <div class="dish-card__body">
-                        <h3>@dish.Title</h3>
+                        <h3>
+                            @dish.Title
+                            @if (!string.IsNullOrWhiteSpace(dish.PriceText))
+                            {
+                                <span class="menu-item__price">@dish.PriceText</span>
+                            }
+                        </h3>
                         <p>@dish.Description</p>
                     </div>
                 </div>
@@ -131,8 +138,8 @@
 {
     <section class="gallery container">
         <div class="section-head reveal" data-align="center">
-            <span class="eyebrow">Galería</span>
-            <h2>Así es nuestro local</h2>
+            <span class="eyebrow">@T("home.gallery.eyebrow")</span>
+            <h2>@T("home.gallery.title")</h2>
         </div>
         <div class="reveal">
             <PhotoCarousel Images="galleryImages" @rendermode="InteractiveServer" />
@@ -144,8 +151,8 @@
 {
     <section class="testimonials container">
         <div class="section-head reveal" data-align="center">
-            <span class="eyebrow">Opiniones</span>
-            <h2>Lo que dicen nuestros clientes</h2>
+            <span class="eyebrow">@T("home.testimonials.eyebrow")</span>
+            <h2>@T("home.testimonials.title")</h2>
         </div>
         <div class="testimonial-grid stagger">
             @foreach (var testimonial in testimonials)
@@ -187,27 +194,30 @@
 <section class="cta-banner">
     <div class="container cta-banner__inner reveal">
         <div>
-            <h2>¿Vienes en grupo o para una ocasión especial?</h2>
-            <p>Resérvanos con antelación y te preparamos la mesa a tu gusto.</p>
+            <h2>@T("home.cta.title")</h2>
+            <p>@T("home.cta.text")</p>
         </div>
-        <a class="button" data-size="lg" href="/reservar">Reservar ahora</a>
+        <a class="button" data-size="lg" href="/grupos">@T("home.cta.button")</a>
     </div>
 </section>
 
 @code {
+    private Dictionary<string, string> texts = new();
     private SiteContent content = new();
     private List<Dish> dishes = new();
     private List<Testimonial> testimonials = new();
     private List<GalleryImage> galleryImages = new();
 
+    private string T(string key) => texts.TryGetValue(key, out var value) ? value : key;
+
     private sealed record MenuCategory(string Image, string Title, string Description, string Fallback);
 
     private List<MenuCategory> MenuCategories => new()
     {
-        new(content.Category1Image, content.Category1Title, content.Category1Description, "🥗"),
-        new(content.Category2Image, content.Category2Title, content.Category2Description, "🍕"),
-        new(content.Category3Image, content.Category3Title, content.Category3Description, "🍰"),
-        new(content.Category4Image, content.Category4Title, content.Category4Description, "🥤"),
+        new(content.Category1Image, content.Category1Title, content.Category1Description, "🔥"),
+        new(content.Category2Image, content.Category2Title, content.Category2Description, "🍚"),
+        new(content.Category3Image, content.Category3Title, content.Category3Description, "🥘"),
+        new(content.Category4Image, content.Category4Title, content.Category4Description, "🍸"),
     };
 
     private string HeroStyle
@@ -216,7 +226,7 @@
         {
             var image = galleryImages.ElementAtOrDefault(0)?.ImageUrl
                 ?? dishes.FirstOrDefault(d => !string.IsNullOrWhiteSpace(d.ImageUrl))?.ImageUrl;
-            return string.IsNullOrWhiteSpace(image) ? "" : $"background-image: url('{image}');";
+            return string.IsNullOrWhiteSpace(image) ? "background-image: url('/images/amaranta-ambiente.jpg');" : $"background-image: url('{image}');";
         }
     }
 
@@ -228,14 +238,15 @@
                 ?? galleryImages.ElementAtOrDefault(0)?.ImageUrl
                 ?? dishes.Skip(1).FirstOrDefault(d => !string.IsNullOrWhiteSpace(d.ImageUrl))?.ImageUrl
                 ?? dishes.FirstOrDefault(d => !string.IsNullOrWhiteSpace(d.ImageUrl))?.ImageUrl;
-            return string.IsNullOrWhiteSpace(image) ? "" : $"background-image: url('{image}');";
+            return string.IsNullOrWhiteSpace(image) ? "background-image: url('/images/amaranta-brasa.jpg');" : $"background-image: url('{image}');";
         }
     }
 
     protected override async Task OnInitializedAsync()
     {
+        texts = await Texts.GetAsync();
         content = await ContentService.GetAsync();
-        dishes = await DishService.GetAllAsync();
+        dishes = (await DishService.GetAllAsync()).Where(d => d.ShowOnHome).ToList();
         testimonials = await TestimonialService.GetAllAsync();
         galleryImages = await GalleryService.GetAllAsync();
     }

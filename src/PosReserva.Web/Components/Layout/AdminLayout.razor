@@ -1,16 +1,19 @@
 @inherits LayoutComponentBase
+@using PosReserva.Web.Services
+@inject SiteTextService Texts
 
 <div class="site">
     <SiteHeader />
 
     <div class="admin-shell">
         <aside class="admin-sidebar">
-            <span class="admin-sidebar__brand">Panel de administración</span>
+            <span class="admin-sidebar__brand">@T("admin.sidebar.brand")</span>
             <nav class="admin-sidebar__nav">
-                <NavLink href="/admin" Match="NavLinkMatch.All">🍽️ Platos</NavLink>
-                <NavLink href="/admin/galeria">🖼️ Galería</NavLink>
-                <NavLink href="/admin/testimonios">💬 Testimonios</NavLink>
-                <NavLink href="/admin/contenido">📝 Contenido</NavLink>
+                <NavLink href="/admin" Match="NavLinkMatch.All">@T("admin.nav.carta")</NavLink>
+                <NavLink href="/admin/galeria">@T("admin.nav.galeria")</NavLink>
+                <NavLink href="/admin/testimonios">@T("admin.nav.opiniones")</NavLink>
+                <NavLink href="/admin/contenido">@T("admin.nav.contenido")</NavLink>
+                <NavLink href="/admin/textos">@T("admin.nav.textos")</NavLink>
             </nav>
         </aside>
 
@@ -19,3 +22,11 @@
         </main>
     </div>
 </div>
+
+@code {
+    private Dictionary<string, string> texts = new();
+
+    private string T(string key) => texts.TryGetValue(key, out var value) ? value : key;
+
+    protected override async Task OnInitializedAsync() => texts = await Texts.GetAsync();
+}

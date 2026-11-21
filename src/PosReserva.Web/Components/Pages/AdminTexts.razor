@@ -1,0 +1,67 @@
+@page "/admin/textos"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@layout PosReserva.Web.Components.Layout.AdminLayout
+@using PosReserva.Web.Data
+@using PosReserva.Web.Services
+@inject SiteTextService Texts
+
+<PageTitle>Textos del sitio · Amaranta Gótico</PageTitle>
+
+<div class="admin-page-head">
+    <h1>Textos del sitio</h1>
+    <p>Edita los textos que aparecen en la web y guarda los cambios cuando termines.</p>
+</div>
+
+@foreach (var group in groups)
+{
+    <div class="admin-card">
+        <h2 class="admin-form__section">@group</h2>
+        <div class="admin-form">
+            @foreach (var def in SiteTextCatalog.Definitions.Where(d => d.Group == group))
+            {
+                <div class="field">
+                    <label>@def.Label</label>
+                    <textarea class="input" rows="@(def.Multiline ? 4 : 2)" value="@values[def.Key]" @oninput="e => { values[def.Key] = e.Value?.ToString() ?? string.Empty; message = null; }"></textarea>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<div class="admin-card">
+    @if (message is not null)
+    {
+        <div class="@(messageIsError ? "field-error" : "admin-form__hint")">@message</div>
+    }
+    <div class="admin-form__actions">
+        <button class="button" @onclick="SaveAsync">Guardar cambios</button>
+    </div>
+</div>
+
+@code {
+    private Dictionary<string, string> values = new(StringComparer.OrdinalIgnoreCase);
+    private IEnumerable<string> groups = SiteTextCatalog.Definitions.GroupBy(d => d.Group).Select(g => g.First().Group);
+    private string? message;
+    private bool messageIsError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        values = await Texts.GetAsync();
+    }
+
+    private async Task SaveAsync()
+    {
+        try
+        {
+            await Texts.SaveAsync(values);
+            messageIsError = false;
+            message = "Cambios guardados.";
+        }
+        catch (Exception)
+        {
+            messageIsError = true;
+            message = "No se han podido guardar los cambios.";
+        }
+    }
+}

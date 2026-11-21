@@ -1,7 +1,7 @@
-/* Reservation wizard — deliberately matches pos-tpv's /tables reservation form (same design
-   tokens, step-wizard pattern, buttons and field styles) since staff and customers should
-   recognize it as "the same reservation flow." Scoped under .resv-page so it never leaks into
-   the rest of the site's own pizzeria branding (Home/Menu/Location/Contact). */
+/* Reservation wizard — deliberately matches pos-tpv's /tables reservation form (same step-wizard
+   pattern, buttons and field styles) since staff and customers should recognize it as "the same
+   reservation flow." Scoped under .resv-page so it never leaks into the rest of Amaranta Gótico's
+   branding (Home/Menu/Location/Contact); its tokens are the shared copper/charcoal palette. */
 
 @font-face {
     font-family: 'Inter Variable';
@@ -21,22 +21,22 @@
 }
 
 .resv-page {
-    --primary: #6366f1;
-    --primary-strong: #4f46e5;
-    --danger: #ef4444;
-    --success: #22c55e;
-    --card: #ffffff;
-    --card-2: #f8fafc;
-    --border: #e2e8f0;
-    --text: #0f172a;
-    --text-soft: #64748b;
-    --on-primary: #ffffff;
+    --primary: #d38a50;
+    --primary-strong: #a96535;
+    --danger: #f87171;
+    --success: #4ade80;
+    --card: #221e1a;
+    --card-2: #2b2520;
+    --border: rgba(211, 138, 80, .26);
+    --text: #f2e6d5;
+    --text-soft: #b9a993;
+    --on-primary: #161413;
     --on-success: #06210f;
     --radius: 14px;
     --radius-sm: 9px;
-    --shadow-sm: 0 1px 2px rgba(15, 23, 42, .06), 0 1px 3px rgba(15, 23, 42, .08);
-    --shadow: 0 4px 12px rgba(15, 23, 42, .08), 0 2px 4px rgba(15, 23, 42, .05);
-    --shadow-lg: 0 20px 40px rgba(15, 23, 42, .18);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .35), 0 1px 3px rgba(0, 0, 0, .28);
+    --shadow: 0 4px 12px rgba(0, 0, 0, .4), 0 2px 4px rgba(0, 0, 0, .3);
+    --shadow-lg: 0 20px 40px rgba(0, 0, 0, .6);
     --transition: 160ms cubic-bezier(.4, 0, .2, 1);
     --resv-font: 'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 

@@ -4,11 +4,13 @@
 @using PosReserva.Web.Models
 @using PosReserva.Web.Services
 @inject ReservationApiClient Api
+@inject SiteTextService Texts
 
-<PageTitle>Reservar mesa · Pizzería del Puerto</PageTitle>
+<PageTitle>Reserva tu mesa · Amaranta Gótico</PageTitle>
 
 <section class="container page-section">
-    <h1 style="text-align:center">Reserva tu mesa</h1>
+    <h1 style="text-align:center">@T("reservar.title")</h1>
+    <p style="text-align:center">@T("reservar.intro")</p>
 
     <div class="resv-page card">
         @if (submitted)
@@ -16,9 +18,10 @@
             <div class="resv-success">
                 <div class="resv-success__circle">✓</div>
                 <p class="resv-success__text">
-                    ¡Gracias, @model.CustomerName! Hemos recibido tu solicitud para el
-                    @model.Date.ToString("dd/MM/yyyy") a las @time.ToString("HH:mm").
-                    Te confirmaremos por teléfono en breve.
+                    @(T("reservar.success")
+                        .Replace("{name}", model.CustomerName)
+                        .Replace("{date}", model.Date.ToString("dd/MM/yyyy"))
+                        .Replace("{time}", time.ToString("HH:mm")))
                 </p>
             </div>
         }
@@ -131,14 +134,18 @@
 </section>
 
 @code {
+    private Dictionary<string, string> texts = new();
+
+    private string T(string key) => texts.TryGetValue(key, out var value) ? value : key;
+
     private sealed record Step(int Number, string Label);
 
-    private static readonly Step[] Steps =
+    private Step[] Steps =>
     [
-        new(1, "Datos"),
-        new(2, "Fecha"),
-        new(3, "Hora"),
-        new(4, "Resumen"),
+        new(1, T("reservar.step1")),
+        new(2, T("reservar.step2")),
+        new(3, T("reservar.step3")),
+        new(4, T("reservar.step4")),
     ];
 
     private static readonly TimeOnly LunchStart = new(13, 0);
@@ -176,6 +183,8 @@
     };
 
     private void PickPeriod(bool lunch) => time = lunch ? LunchStart : DinnerStart;
+
+    protected override async Task OnInitializedAsync() => texts = await Texts.GetAsync();
 
     private void GoNext()
     {

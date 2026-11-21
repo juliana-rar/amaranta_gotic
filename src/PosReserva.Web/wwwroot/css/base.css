@@ -1,32 +1,33 @@
 /* ============================================================================
    DESIGN SYSTEM — tokens
-   Warm, restrained palette (linen neutrals + a single terracotta accent),
-   an editorial serif/sans pairing, a fixed spacing scale and soft, low
-   -contrast shadows. Every value used elsewhere in the public site's CSS
-   traces back to a variable defined here — nothing is invented per-section.
+   Amaranta Gótico: charcoal stone, copper hairlines and parchment type — a
+   low-lit Barri Gòtic brasería pairing an engraved serif with a clean sans,
+   a fixed spacing scale and deep, restrained shadows. Every value used
+   elsewhere in the public site's CSS traces back to a variable defined here.
    ========================================================================= */
 :root {
     /* --- Color: neutrals ------------------------------------------------ */
-    --color-bg: #f8f3ea;            /* page background — warm linen, not stark white */
-    --color-bg-soft: #f1e9d9;       /* secondary section background, one notch deeper */
-    --color-surface: #fffdf9;       /* cards, header, popovers */
-    --color-border: #e4d9c4;        /* hairline borders/dividers */
-    --color-text: #201810;          /* ink — also doubles as the dark-section background */
-    --color-text-muted: #6c6153;    /* secondary copy */
-    --color-on-dark: #f5eee1;       /* copy set on dark/ink backgrounds */
-    --color-on-dark-muted: rgba(245, 238, 225, .68);
+    --color-bg: #161413;            /* page background — deep charcoal stone */
+    --color-bg-soft: #211d19;       /* secondary section background, warm stone */
+    --color-surface: #221e1a;       /* cards, header, popovers */
+    --color-border: rgba(211, 138, 80, .26); /* copper hairlines/dividers */
+    --color-text: #f2e6d5;          /* parchment copy on dark */
+    --color-text-muted: #b9a993;    /* secondary copy */
+    --color-on-dark: #f6ead7;       /* copy set on charcoal/photo backgrounds */
+    --color-on-dark-muted: rgba(246, 234, 215, .68);
 
     /* --- Color: the one accent ------------------------------------------ */
-    --color-primary: #9a3b1c;
-    --color-primary-dark: #762c14;
+    --color-primary: #d38a50;       /* aged copper */
+    --color-primary-dark: #a96535;
+    --color-accent-light: #edc49c;
 
     /* --- Color: semantic (functional, not brand accents) ----------------- */
-    --color-danger: #b3261e;
-    --color-success: #2f6b3a;
+    --color-danger: #d9604f;
+    --color-success: #5fa773;
 
     /* --- Type ------------------------------------------------------------ */
-    --font-heading: 'Fraunces', Georgia, 'Times New Roman', serif;
-    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-heading: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Inter', sans-serif;
 
     /* Fluid modular scale — clamp(min, preferred, max) so headings scale
        smoothly between phone and desktop instead of jumping at breakpoints. */
@@ -44,9 +45,9 @@
     --leading-snug: 1.35;
     --leading-body: 1.7;
 
-    --tracking-wide: 0.03em;
-    --tracking-wider: 0.08em;
-    --tracking-widest: 0.15em;
+    --tracking-wide: 0.035em;
+    --tracking-wider: 0.11em;
+    --tracking-widest: 0.19em;
 
     /* --- Spacing scale (4 / 8 / 16 / 24 / 32 / 48 / 64 / 96 / 128px) ----- */
     --space-1: 0.25rem;
@@ -70,9 +71,9 @@
     --max-width: 72rem;
     --site-header-h: 4.25rem;
 
-    --shadow-sm: 0 1px 2px rgba(32, 24, 16, 0.06);
-    --shadow: 0 20px 40px -22px rgba(32, 24, 16, 0.35);
-    --shadow-lg: 0 32px 64px -20px rgba(32, 24, 16, 0.4);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .35);
+    --shadow: 0 20px 40px -22px rgba(0, 0, 0, .62);
+    --shadow-lg: 0 32px 64px -20px rgba(0, 0, 0, .7);
 
     --ease: cubic-bezier(.4, 0, .2, 1);
     --transition-fast: 200ms;
@@ -99,7 +100,11 @@ html {
 body {
     font-family: var(--font-body);
     color: var(--color-text);
-    background: var(--color-bg);
+    background-color: var(--color-bg);
+    background-image:
+        radial-gradient(ellipse at 15% 0%, color-mix(in srgb, var(--color-primary) 4%, transparent), transparent 55%),
+        repeating-linear-gradient(135deg, rgba(246, 234, 215, .012) 0 1px, transparent 1px 7px);
+    background-attachment: fixed;
     font-size: var(--text-base);
     line-height: var(--leading-body);
     -webkit-font-smoothing: antialiased;
@@ -125,9 +130,9 @@ button, input, select, textarea {
    ========================================================================= */
 h1, h2, h3 {
     font-family: var(--font-heading);
-    font-weight: 560;
+    font-weight: 500;
     line-height: var(--leading-tight);
-    letter-spacing: -0.01em;
+    letter-spacing: 0.005em;
     margin: 0 0 var(--space-3);
 }
 
@@ -173,7 +178,7 @@ a {
     border-radius: var(--radius);
     padding: 0.8rem 1.6rem;
     background: var(--color-primary);
-    color: var(--color-on-dark);
+    color: var(--color-bg);
     font-family: var(--font-body);
     font-weight: 600;
     font-size: var(--text-xs);
@@ -188,6 +193,13 @@ a {
                 transform var(--transition-fast) var(--ease);
 }
 
+.button-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+}
+
 .button:hover {
     background: var(--color-primary-dark);
     border-color: var(--color-primary-dark);
@@ -196,14 +208,14 @@ a {
 
 .button[data-variant="outline"] {
     background: transparent;
-    border-color: color-mix(in srgb, var(--color-text) 30%, transparent);
-    color: var(--color-text);
+    border-color: color-mix(in srgb, var(--color-primary) 70%, transparent);
+    color: var(--color-primary);
 }
 
 .button[data-variant="outline"]:hover {
     border-color: var(--color-primary);
-    color: var(--color-primary);
-    background: transparent;
+    color: var(--color-accent-light);
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
 .button[data-size="lg"] {
@@ -225,9 +237,40 @@ a {
 
 .eyebrow::before {
     content: '';
-    width: 1.6rem;
+    width: 1.8rem;
     height: 1px;
-    background: currentColor;
+    background: var(--color-primary);
+}
+
+.gothic-divider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 1.5rem;
+    color: var(--color-primary);
+    font-family: var(--font-heading);
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-widest);
+}
+
+.gothic-divider::before {
+    content: '✦';
+    position: relative;
+    z-index: 1;
+    padding-inline: var(--space-3);
+    background: var(--color-bg);
+    line-height: 1;
+}
+
+.gothic-divider::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 50%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+    opacity: .5;
 }
 
 /* Scroll-reveal: fade + rise as an element enters the viewport (site.js toggles .is-visible via
@@ -269,7 +312,7 @@ a {
     border: 1px solid var(--color-primary);
     border-radius: var(--radius-full);
     background: var(--color-primary);
-    color: var(--color-on-dark);
+    color: var(--color-bg);
     font-size: 1.2rem;
     line-height: 1;
     cursor: pointer;
@@ -297,7 +340,7 @@ a {
 
 #blazor-error-ui {
     background: var(--color-danger);
-    color: #fff;
+    color: var(--color-bg);
     bottom: 0;
     box-shadow: 0 -0.25rem 1rem rgba(0, 0, 0, 0.2);
     display: none;

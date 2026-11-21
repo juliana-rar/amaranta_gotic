@@ -29,6 +29,13 @@ public static class SchemaPatcher
         ("StoryQuote", "TEXT"), ("StoryQuoteAuthor", "TEXT"),
     ];
 
+    private static readonly (string Column, string SqlType)[] NewDishColumns =
+    [
+        ("Category", "TEXT"),
+        ("PriceText", "TEXT"),
+        ("ShowOnHome", "INTEGER")
+    ];
+
     public static async Task ApplyAsync(PosReservaDbContext db)
     {
         var existingColumns = (await db.Database
@@ -49,6 +56,30 @@ public static class SchemaPatcher
 #pragma warning restore EF1002
             }
         }
+
+        var existingDishColumns = (await db.Database
+                .SqlQueryRaw<string>("SELECT name FROM pragma_table_info('Dishes')")
+                .ToListAsync())
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var (column, sqlType) in NewDishColumns)
+        {
+            if (!existingDishColumns.Contains(column))
+            {
+                var defaultSql = sqlType == "TEXT" ? "''" : "1";
+#pragma warning disable EF1002
+                await db.Database.ExecuteSqlRawAsync(
+                    $"ALTER TABLE Dishes ADD COLUMN {column} {sqlType} NOT NULL DEFAULT {defaultSql}");
+#pragma warning restore EF1002
+            }
+        }
+
+        await db.Database.ExecuteSqlRawAsync("""
+            CREATE TABLE IF NOT EXISTS SiteTexts (
+                Key TEXT NOT NULL CONSTRAINT PK_SiteTexts PRIMARY KEY,
+                Value TEXT NOT NULL
+            )
+            """);
 
         await db.Database.ExecuteSqlRawAsync("""
             CREATE TABLE IF NOT EXISTS Testimonials (

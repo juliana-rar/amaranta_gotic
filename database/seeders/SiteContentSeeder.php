@@ -10,9 +10,9 @@ class SiteContentSeeder extends Seeder
     public function run(): void
     {
         SiteContent::updateOrCreate(['id' => 1], [
-            'hero_eyebrow' => '🔥 Brasería mediterránea en el Barri Gòtic',
-            'hero_title' => 'Fuego, piedra y una mesa larga en el Gótico',
-            'hero_subtitle' => 'Carnes a la brasa, arroces para compartir y copas bajo la luz baja de la Baixada de Sant Miquel. A un paso de la Catedral de Barcelona.',
+            'hero_eyebrow' => 'Brasería mediterránea · Barri Gòtic',
+            'hero_title' => 'Fuego, piedra, mesa larga',
+            'hero_subtitle' => 'Brasa y arroces para compartir en el corazón del Gótico.',
 
             'stat1_number' => '100%', 'stat1_label' => 'Cocina a la brasa',
             'stat2_number' => '24 €', 'stat2_label' => 'Menús de grupo desde',

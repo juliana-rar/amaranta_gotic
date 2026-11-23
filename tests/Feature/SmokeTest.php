@@ -24,9 +24,34 @@ class SmokeTest extends TestCase
 
         $this->post('/login', ['username' => 'admin', 'password' => 'admin1234'])->assertRedirect('/admin');
 
-        foreach (['/admin', '/admin/galeria', '/admin/testimonios', '/admin/contenido', '/admin/textos'] as $uri) {
+        foreach (['/admin', '/admin/galeria', '/admin/testimonios', '/admin/horarios', '/admin/contenido', '/admin/textos'] as $uri) {
             $this->get($uri)->assertOk();
         }
+    }
+
+    public function test_admin_can_save_hours(): void
+    {
+        $this->seed();
+
+        $this->post('/login', ['username' => 'admin', 'password' => 'admin1234'])->assertRedirect('/admin');
+
+        $this->post('/admin/horarios', [
+            'location_hours' => 'Lun–Dom · 12:00–16:00 y 19:00–23:00',
+            'hours' => [
+                0 => ['is_open' => 1, 'shift1_start' => '12:00', 'shift1_end' => '16:00', 'has_shift2' => 1, 'shift2_start' => '19:00', 'shift2_end' => '23:00'],
+            ],
+        ])->assertRedirect('/admin/horarios');
+
+        $this->assertDatabaseHas('business_hours', [
+            'day_order' => 0,
+            'shift1_start' => '12:00',
+            'shift2_end' => '23:00',
+        ]);
+
+        $this->assertDatabaseHas('site_contents', [
+            'id' => 1,
+            'location_hours' => 'Lun–Dom · 12:00–16:00 y 19:00–23:00',
+        ]);
     }
 
     public function test_reservation_wizard_saves_locally(): void

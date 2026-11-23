@@ -33,3 +33,12 @@ src/PosReserva.Web/wwwroot/uploads/
 !/public/uploads/dishes/.gitkeep
 /public/uploads/gallery/*
 !/public/uploads/gallery/.gitkeep
+
+## Local media assets (only the images used by the site are tracked)
+/media/*
+!/media/2.jpg
+!/media/4.jpg
+!/media/5.jpg
+!/media/local1.jpg
+!/media/local3.jpg
+!/media/local5.jpg

@@ -20,6 +20,7 @@
             <a href="/admin" @if(request()->is('admin')) data-active="true" @endif>{{ t('admin.nav.carta') }}</a>
             <a href="/admin/galeria" @if(request()->is('admin/galeria')) data-active="true" @endif>{{ t('admin.nav.galeria') }}</a>
             <a href="/admin/testimonios" @if(request()->is('admin/testimonios')) data-active="true" @endif>{{ t('admin.nav.opiniones') }}</a>
+            <a href="/admin/horarios" @if(request()->is('admin/horarios')) data-active="true" @endif>{{ t('admin.nav.horarios') }}</a>
             <a href="/admin/contenido" @if(request()->is('admin/contenido')) data-active="true" @endif>{{ t('admin.nav.contenido') }}</a>
             <a href="/admin/textos" @if(request()->is('admin/textos')) data-active="true" @endif>{{ t('admin.nav.textos') }}</a>
         </nav>

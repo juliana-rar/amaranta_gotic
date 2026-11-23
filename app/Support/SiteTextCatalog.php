@@ -17,9 +17,9 @@ final class SiteTextCatalog
 
             ['home.hero.cta', 'Inicio', 'Botón reservar', 'Reservar mesa'],
             ['home.hero.secondary', 'Inicio', 'Botón menú', 'Ver el menú'],
-            ['home.hero.trust1', 'Inicio', 'Dato destacado 1', '📍 Barrio Gótico, Barcelona'],
-            ['home.hero.trust2', 'Inicio', 'Dato destacado 2', '🔥 Cocina a la brasa'],
-            ['home.hero.trust3', 'Inicio', 'Dato destacado 3', '👥 Mesas para grupos'],
+            ['home.hero.trust1', 'Inicio', 'Dato destacado 1', 'Barri Gòtic, Barcelona'],
+            ['home.hero.trust2', 'Inicio', 'Dato destacado 2', 'Cocina a la brasa'],
+            ['home.hero.trust3', 'Inicio', 'Dato destacado 3', 'Mesas para grupos'],
             ['home.menu.title', 'Inicio', 'Título de la carta', 'Nuestra carta'],
             ['home.menu.cta', 'Inicio', 'Botón de la carta', 'Ver la carta completa'],
             ['home.origin.heading1', 'Inicio', 'Título historia 1', 'El barrio'],
@@ -107,6 +107,7 @@ final class SiteTextCatalog
             ['admin.nav.carta', 'Panel', 'Enlace carta', '🔥 Carta'],
             ['admin.nav.galeria', 'Panel', 'Enlace fotos', '📷 Fotos'],
             ['admin.nav.opiniones', 'Panel', 'Enlace opiniones', '💬 Opiniones'],
+            ['admin.nav.horarios', 'Panel', 'Enlace horarios', '🕒 Horarios'],
             ['admin.nav.contenido', 'Panel', 'Enlace contenido', '📝 Contenido'],
             ['admin.nav.textos', 'Panel', 'Enlace textos', '✍️ Textos'],
         ];

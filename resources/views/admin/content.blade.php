@@ -31,7 +31,7 @@
             'story_quote' => ['Cita', 'text'], 'story_quote_author' => ['Autor de la cita', 'text'],
         ],
         'Contacto' => [
-            'location_address' => ['Dirección', 'textarea'], 'location_hours' => ['Horario resumido', 'text'],
+            'location_address' => ['Dirección', 'textarea'],
             'contact_phone' => ['Teléfono', 'text'], 'contact_email' => ['Email', 'text'], 'contact_instagram' => ['Instagram', 'text'],
         ],
     ];
@@ -39,7 +39,7 @@
 
 <div>
     <h1>{{ t('admin.nav.contenido') }}</h1>
-    <p>Textos y datos de la portada; las rutas de imagen pueden empezar por <code>/</code>.</p>
+    <p>Textos y datos de la portada; las rutas de imagen pueden empezar por <code>/</code>. Los horarios se editan en su propio apartado.</p>
 </div>
 
 @if(session('saved'))<div class="notice">{{ session('saved') }}</div>@endif
@@ -56,24 +56,6 @@
             </div>
         </fieldset>
     @endforeach
-
-    <fieldset>
-        <legend>Horario</legend>
-        <div data-hours>
-            @foreach(range(0, 6) as $day)
-                @php($hour = $hours->firstWhere('day_order', $day))
-                <div data-hour-row>
-                    <strong>{{ day_names()[$day] }}</strong>
-                    <x-field :name="'hours.'.$day.'.is_open'" label="Abierto" type="checkbox" :value="optional($hour)->is_open" />
-                    <x-field :name="'hours.'.$day.'.shift1_start'" label="Apertura" :value="optional($hour)->shift1_start" />
-                    <x-field :name="'hours.'.$day.'.shift1_end'" label="Cierre" :value="optional($hour)->shift1_end" />
-                    <x-field :name="'hours.'.$day.'.has_shift2'" label="Segundo turno" type="checkbox" :value="optional($hour)->shift2_start" />
-                    <x-field :name="'hours.'.$day.'.shift2_start'" label="Apertura 2" :value="optional($hour)->shift2_start" />
-                    <x-field :name="'hours.'.$day.'.shift2_end'" label="Cierre 2" :value="optional($hour)->shift2_end" />
-                </div>
-            @endforeach
-        </div>
-    </fieldset>
 
     <div data-nav><button type="submit" class="btn">Guardar contenido</button></div>
 </form>

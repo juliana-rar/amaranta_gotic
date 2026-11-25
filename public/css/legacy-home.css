@@ -120,30 +120,26 @@ main > section { padding: 0; }
 }
 .carousel__dot[data-active="true"] { background: var(--color-primary); width: 1.6rem; }
 
-.brasa-feature { position: relative; width: 100%; background: #0f0c0a; }
-.brasa-feature .carousel { height: clamp(28rem, 72vh, 44rem); border-block: 0; box-shadow: none; }
+.brasa-feature { position: relative; width: 100%; background: #0b0806; }
+.brasa-feature .carousel { height: clamp(12rem, 24vh, 18rem); border-block: 0; box-shadow: none; }
 .brasa-feature .carousel::before {
     background:
-        radial-gradient(ellipse at 80% 40%, rgba(211, 138, 80, .16), transparent 55%),
-        linear-gradient(90deg, rgba(8, 7, 6, .88) 0%, rgba(8, 7, 6, .52) 42%, rgba(8, 7, 6, .1) 100%);
+        radial-gradient(ellipse 55% 130% at 50% 118%, rgba(255, 122, 34, .55), rgba(211, 61, 12, .22) 42%, transparent 72%),
+        linear-gradient(180deg, rgba(8, 7, 6, .78) 0%, rgba(8, 7, 6, .18) 42%, rgba(8, 7, 6, .86) 100%);
 }
-.brasa-feature .carousel__slide img { filter: saturate(.82) contrast(1.08) brightness(.94); }
-.brasa-feature__copy {
+.brasa-feature .carousel__slide img { filter: sepia(.32) saturate(1.2) contrast(1.12) brightness(.82); }
+.brasa-feature__label {
     position: absolute;
     z-index: 4;
     left: clamp(1.5rem, 6vw, 6rem);
-    top: 50%;
-    transform: translateY(-50%);
-    max-width: 34rem;
+    bottom: clamp(3.5rem, 6vw, 5rem);
     color: var(--color-on-dark);
     pointer-events: none;
 }
-.brasa-feature__copy .eyebrow { color: var(--color-accent-light); }
-.brasa-feature__copy h2 { font-size: clamp(2.2rem, 5vw, 4rem); font-weight: 300; line-height: 1.02; letter-spacing: -.03em; margin: var(--space-2) 0; }
-.brasa-feature__copy p { color: var(--color-on-dark-muted); max-width: 26rem; margin: 0; line-height: 1.6; }
+.brasa-feature__label .eyebrow { color: var(--color-accent-light); }
 @media (max-width: 47.99rem) {
-    .brasa-feature .carousel { height: clamp(24rem, 70vh, 34rem); }
-    .brasa-feature__copy { top: auto; bottom: clamp(5rem, 18vw, 7rem); transform: none; }
+    .brasa-feature .carousel { height: clamp(10rem, 28vh, 15rem); }
+    .brasa-feature__label { bottom: clamp(2.5rem, 12vw, 3.5rem); }
 }
 
 .menu-band {

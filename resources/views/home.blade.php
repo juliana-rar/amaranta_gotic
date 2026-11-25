@@ -47,37 +47,6 @@
     </div>
 </section>
 
-@if($brasaSlides->isNotEmpty())
-    <section class="brasa-feature">
-        <div class="carousel carousel--brasa">
-            <div class="carousel__track">
-                @foreach($brasaSlides as $i => $slide)
-                    <div class="carousel__slide" @if($i === 0) data-active="true" @endif>
-                        <img src="{{ $slide['src'] }}" alt="{{ $slide['alt'] }}" @if($i > 0) loading="lazy" @endif>
-                    </div>
-                @endforeach
-            </div>
-            <div class="brasa-feature__copy reveal">
-                <span class="eyebrow">La brasa</span>
-                <h2>Fuego, paciencia y producto</h2>
-                <p>Carne, pescado y verdura marcados al momento. Nuestra cocina vive alrededor del carbón.</p>
-            </div>
-            @if($brasaSlides->count() > 1)
-                <button type="button" class="carousel__nav" data-dir="prev" aria-label="Foto anterior">‹</button>
-                <button type="button" class="carousel__nav" data-dir="next" aria-label="Foto siguiente">›</button>
-                <div class="carousel__counter" aria-hidden="true">
-                    <span data-carousel-current>01</span><i></i><span>{{ str_pad((string) $brasaSlides->count(), 2, '0', STR_PAD_LEFT) }}</span>
-                </div>
-                <div class="carousel__dots">
-                    @foreach($brasaSlides as $i => $slide)
-                        <button type="button" class="carousel__dot" @if($i === 0) data-active="true" @endif aria-label="Ir a la foto {{ $i + 1 }}"></button>
-                    @endforeach
-                </div>
-            @endif
-        </div>
-    </section>
-@endif
-
 <section class="menu-band">
     <div class="container">
         <div class="menu-band__grid stagger">
@@ -101,6 +70,35 @@
         <div class="menu-band__cta reveal"><a class="button" href="/menu">{{ t('home.menu.cta') }} <span aria-hidden="true">↗</span></a></div>
     </div>
 </section>
+
+@if($brasaSlides->isNotEmpty())
+    <section class="brasa-feature">
+        <div class="carousel carousel--brasa">
+            <div class="carousel__track">
+                @foreach($brasaSlides as $i => $slide)
+                    <div class="carousel__slide" @if($i === 0) data-active="true" @endif>
+                        <img src="{{ $slide['src'] }}" alt="{{ $slide['alt'] }}" @if($i > 0) loading="lazy" @endif>
+                    </div>
+                @endforeach
+            </div>
+            <div class="brasa-feature__label reveal">
+                <span class="eyebrow">La brasa</span>
+            </div>
+            @if($brasaSlides->count() > 1)
+                <button type="button" class="carousel__nav" data-dir="prev" aria-label="Foto anterior">‹</button>
+                <button type="button" class="carousel__nav" data-dir="next" aria-label="Foto siguiente">›</button>
+                <div class="carousel__counter" aria-hidden="true">
+                    <span data-carousel-current>01</span><i></i><span>{{ str_pad((string) $brasaSlides->count(), 2, '0', STR_PAD_LEFT) }}</span>
+                </div>
+                <div class="carousel__dots">
+                    @foreach($brasaSlides as $i => $slide)
+                        <button type="button" class="carousel__dot" @if($i === 0) data-active="true" @endif aria-label="Ir a la foto {{ $i + 1 }}"></button>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    </section>
+@endif
 
 <section class="features container stagger">
     @foreach(range(1, 3) as $i)

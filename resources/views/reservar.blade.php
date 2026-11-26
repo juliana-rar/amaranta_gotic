@@ -35,7 +35,7 @@
 
                     <div data-steps>
                         @foreach(range(1, 4) as $n)
-                            <button type="submit" name="go" value="{{ $n }}" @if($n > $maxStep) disabled @endif>
+                            <button type="submit" name="go" value="{{ $n }}" data-step="{{ $n }}" aria-current="{{ $n === $step ? 'step' : 'false' }}" @if($n > $maxStep) disabled @endif>
                                 <span>{{ $n < $step ? '✓' : $n }}</span>
                                 <span>{{ t("reservar.step{$n}") }}</span>
                             </button>
@@ -43,7 +43,7 @@
                     </div>
 
                     <div data-panels>
-                        <div data-panel>
+                        <div data-panel class="{{ $step === 1 ? 'is-active' : '' }}">
                             <h2>¿Quién viene?</h2>
                             <div data-field>
                                 <label for="customer_name">Nombre y apellidos</label>
@@ -69,7 +69,7 @@
                             </div>
                         </div>
 
-                        <div data-panel>
+                        <div data-panel class="{{ $step === 2 ? 'is-active' : '' }}">
                             <h2>¿Qué día?</h2>
                             <div data-field>
                                 <label for="date">Fecha</label>
@@ -81,7 +81,7 @@
                             </div>
                         </div>
 
-                        <div data-panel>
+                        <div data-panel class="{{ $step === 3 ? 'is-active' : '' }}">
                             <h2>¿A qué hora?</h2>
                             <div data-picker>
                                 <label>
@@ -110,7 +110,7 @@
                             @endforeach
                         </div>
 
-                        <div data-panel>
+                        <div data-panel class="{{ $step === 4 ? 'is-active' : '' }}">
                             <h2>Confirma tu reserva</h2>
                             <div data-summary>
                                 <div><span>Nombre</span><strong>{{ $data['customer_name'] }}</strong></div>

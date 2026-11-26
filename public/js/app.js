@@ -113,17 +113,152 @@ document.querySelectorAll('.carousel').forEach((carousel) => {
     start();
 });
 
-const reservation = document.querySelector('.resv[data-period]');
+const reservation = document.querySelector('.resv[data-wizard]');
 
 if (reservation) {
-    reservation.querySelectorAll('input[name="period"]').forEach((radio) => {
-        radio.addEventListener('change', () => {
-            reservation.setAttribute('data-period', radio.value);
-            reservation.querySelectorAll('input[name="time"]').forEach((time) => {
-                time.checked = false;
+    const wizardForm = reservation.querySelector('form');
+
+    if (wizardForm) {
+        wizardForm.querySelectorAll('input[name="period"]').forEach((radio) => {
+            radio.addEventListener('change', () => {
+                reservation.setAttribute('data-period', radio.value);
+                wizardForm.querySelectorAll('input[name="time"]').forEach((time) => {
+                    time.checked = false;
+                });
             });
         });
-    });
+
+        let steppingTimer;
+
+        const syncForm = (sourceForm) => {
+            const panels = wizardForm.querySelector('[data-panels]');
+            const sourcePanels = sourceForm.querySelector('[data-panels]');
+            const nav = wizardForm.querySelector('[data-nav]');
+            const sourceNav = sourceForm.querySelector('[data-nav]');
+
+            sourceForm.querySelectorAll('input[type="hidden"]').forEach((source) => {
+                const target = wizardForm.querySelector(`input[type="hidden"][name="${source.name}"]`);
+                if (target) target.value = source.value;
+            });
+
+            sourcePanels.querySelectorAll('input, textarea').forEach((source) => {
+                const target = source.type === 'radio' || source.type === 'checkbox'
+                    ? panels.querySelector(`input[name="${source.name}"][value="${source.value}"]`)
+                    : panels.querySelector(`[name="${source.name}"]`);
+                if (!target) return;
+                if (source.type === 'radio' || source.type === 'checkbox') {
+                    target.checked = source.checked;
+                } else {
+                    target.value = source.value;
+                }
+            });
+
+            const steps = [...wizardForm.querySelector('[data-steps]').querySelectorAll('button')];
+            [...sourceForm.querySelector('[data-steps]').querySelectorAll('button')].forEach((source, i) => {
+                if (!steps[i]) return;
+                steps[i].disabled = source.disabled;
+                steps[i].setAttribute('aria-current', source.getAttribute('aria-current') || 'false');
+                steps[i].querySelector('span').textContent = source.querySelector('span').textContent;
+            });
+
+            [...panels.querySelectorAll('[data-panel]')].forEach((panel, i) => {
+                const source = sourcePanels.querySelectorAll('[data-panel]')[i];
+                if (source) panel.className = source.className;
+            });
+
+            const sourceStatic = sourcePanels.querySelector('[data-static]');
+            const targetStatic = panels.querySelector('[data-static]');
+            if (sourceStatic && targetStatic) targetStatic.textContent = sourceStatic.textContent;
+
+            const sourceSummary = sourcePanels.querySelector('[data-summary]');
+            const targetSummary = panels.querySelector('[data-summary]');
+            if (sourceSummary && targetSummary) targetSummary.innerHTML = sourceSummary.innerHTML;
+
+            if (sourceNav && nav) nav.replaceWith(sourceNav.cloneNode(true));
+
+            const error = wizardForm.querySelector('.error');
+            if (error) error.remove();
+            const sourceError = sourceForm.querySelector('.error');
+            if (sourceError) {
+                wizardForm.insertBefore(sourceError.cloneNode(true), wizardForm.querySelector('[data-nav]'));
+            }
+        };
+
+        const applyResponse = (html) => {
+            const documentFromResponse = new DOMParser().parseFromString(html, 'text/html');
+            const nextReservation = documentFromResponse.querySelector('.resv');
+            if (!nextReservation) throw new Error('Respuesta inesperada del servidor');
+
+            const success = nextReservation.querySelector('[data-success]');
+            if (success) {
+                wizardForm.replaceWith(document.importNode(success, true));
+                return;
+            }
+
+            const nextForm = nextReservation.querySelector('form');
+            if (!nextForm) throw new Error('Respuesta inesperada del servidor');
+
+            const currentStep = Number(reservation.dataset.wizard || 1);
+            const nextStep = Number(nextReservation.dataset.wizard || currentStep);
+
+            window.clearTimeout(steppingTimer);
+            reservation.removeAttribute('data-stepping');
+            void reservation.offsetWidth;
+
+            if (nextStep === currentStep) {
+                if (nextForm.querySelector('.error')) {
+                    reservation.dataset.stepping = 'error';
+                    steppingTimer = window.setTimeout(() => reservation.removeAttribute('data-stepping'), 360);
+                }
+            } else {
+                reservation.dataset.stepping = nextStep > currentStep ? 'forward' : 'back';
+                reservation.dataset.wizard = String(nextStep);
+                steppingTimer = window.setTimeout(() => reservation.removeAttribute('data-stepping'), 700);
+            }
+
+            syncForm(nextForm);
+
+            if (nextReservation.dataset.period) {
+                reservation.dataset.period = nextReservation.dataset.period;
+            }
+        };
+
+        wizardForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (wizardForm.dataset.pending === 'true') return;
+
+            const submitter = event.submitter;
+            const payload = new FormData(wizardForm);
+            if (submitter && submitter.name) payload.set(submitter.name, submitter.value);
+
+            wizardForm.dataset.pending = 'true';
+            reservation.setAttribute('aria-busy', 'true');
+
+            try {
+                const response = await fetch(wizardForm.action || '/reservar', {
+                    method: 'POST',
+                    body: payload,
+                    credentials: 'same-origin',
+                    headers: { Accept: 'text/html' }
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                applyResponse(await response.text());
+            } catch (error) {
+                if (wizardForm.isConnected && submitter && submitter.name) {
+                    const fallback = document.createElement('input');
+                    fallback.type = 'hidden';
+                    fallback.name = submitter.name;
+                    fallback.value = submitter.value;
+                    wizardForm.appendChild(fallback);
+                    wizardForm.submit();
+                    return;
+                }
+            } finally {
+                wizardForm.dataset.pending = 'false';
+                reservation.removeAttribute('aria-busy');
+            }
+        });
+    }
 }
 
 const mapNodes = document.querySelectorAll('[data-map-lat][data-map-lng]');

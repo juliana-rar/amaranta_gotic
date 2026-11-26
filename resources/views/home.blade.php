@@ -34,15 +34,9 @@
     <div class="container hero__inner">
         <span class="eyebrow hero__eyebrow">{{ $site->hero_eyebrow }}</span>
         <h1>{{ $site->hero_title }}</h1>
-        <p>{{ $site->hero_subtitle }}</p>
         <div class="hero__actions">
             <a class="button" data-size="lg" href="/reservar">{{ t('home.hero.cta') }}</a>
-            <a class="button" data-variant="outline" data-size="lg" href="/menu">{{ t('home.hero.secondary') }}</a>
-        </div>
-        <div class="hero__trust">
-            <span class="hero__trust-item">{{ t('home.hero.trust1') }}</span>
-            <span class="hero__trust-item">{{ t('home.hero.trust2') }}</span>
-            <span class="hero__trust-item">{{ t('home.hero.trust3') }}</span>
+            <a class="hero__link" href="/menu">{{ t('home.hero.secondary') }} <span aria-hidden="true">↗</span></a>
         </div>
     </div>
 </section>

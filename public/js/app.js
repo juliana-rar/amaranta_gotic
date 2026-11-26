@@ -1,6 +1,6 @@
 document.documentElement.setAttribute('data-js', 'true');
 
-const header = document.querySelector('header');
+const header = document.querySelector('.site-header');
 const toTop = document.querySelector('.to-top');
 const toTopThreshold = document.body.dataset.page === 'home' ? 800 : 500;
 

@@ -1,4 +1,4 @@
-<header class="site-header" data-hero="{{ in_array(view()->yieldContent('page', 'home'), ['home', 'menu', 'grupos', 'ubicacion', 'contacto']) ? 'true' : 'false' }}">
+<header class="site-header" data-hero="true">
     <div class="container site-header__inner">
         <a class="site-header__brand" href="/"><span class="site-header__brand-mark"><img src="/images/amaranta-logo.png" alt=""></span>Amaranta Gótico</a>
         <input type="checkbox" id="nav-toggle" class="site-header__toggle" aria-label="Abrir menú">
